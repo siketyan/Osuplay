@@ -17,7 +17,22 @@
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Foreground" Value="White"/>
     </Style>
-    
+
+    <Style TargetType="{x:Type Window}" x:Key="SettingsWindowStyle">
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome CornerRadius="3" GlassFrameThickness="1" ResizeBorderThickness="8"
+                              UseAeroCaptionButtons="False" CaptionHeight="24" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="UseLayoutRounding" Value="True"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="#FFFF66AA"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
     <Style TargetType="{x:Type Label}" x:Key="ActionLabelStyle">
         <Setter Property="FontFamily" Value="Resources/#FontAwesome" />
         <Setter Property="Foreground" Value="#222" />

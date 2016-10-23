@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("resources/bg.jpg")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("bass.dll")]
 
 

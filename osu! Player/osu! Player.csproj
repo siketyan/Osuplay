@@ -47,6 +47,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -65,6 +66,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="FolderBrowserDialog.cs" />
     <Compile Include="DispatcherCollection.cs" />
     <Compile Include="RepeatMode.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
@@ -72,6 +74,7 @@
     </Compile>
     <Compile Include="Song.cs" />
     <Compile Include="Thumbnail.cs" />
+    <Compile Include="WindowManager.cs" />
     <Page Include="Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

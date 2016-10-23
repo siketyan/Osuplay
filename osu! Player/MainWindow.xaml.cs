@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
@@ -8,6 +7,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using GrapeN;
+using osu_Player.Properties;
 using Un4seen.Bass;
 
 namespace osu_Player
@@ -27,6 +28,8 @@ namespace osu_Player
             }
         }
 
+        private static MainWindow _instance;
+
         private readonly DispatcherCollection<Song> _songs;
         private readonly DispatcherTimer _timer;
         private readonly SolidColorBrush _brush = new SolidColorBrush(Color.FromRgb(34, 34, 34));
@@ -40,6 +43,7 @@ namespace osu_Player
         {
             InitializeComponent();
 
+            _instance = this;
             _songs = new DispatcherCollection<Song>();
             _timer = new DispatcherTimer(DispatcherPriority.Normal) { Interval = TimeSpan.FromMilliseconds(100) };
             _timer.Tick += TimerTick;
@@ -50,29 +54,29 @@ namespace osu_Player
 
         private async void Init(object sender, RoutedEventArgs e)
         {
-            await Task.Run(() =>
+            if (Settings.Default.OsuPath == "")
             {
-                var parent = new DirectoryInfo(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!\Songs"
-                );
-                var subFolders = parent.GetDirectories("*", SearchOption.TopDirectoryOnly);
-                foreach (var subFolder in subFolders)
+                if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!"))
                 {
-                    try
+                    var result = MessageBox.Show(
+                        "既定の場所にosu!フォルダが見つかりました。このままこのフォルダに設定しますか？",
+                        "osu! Player", MessageBoxButton.YesNo
+                    );
+
+                    if (result == MessageBoxResult.Yes)
                     {
-                        var song = new Song(subFolder);
-                        if (song.IsBeatmap) _songs.Add(song);
+                        Settings.Default.OsuPath =
+                            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!";
+                        Settings.Default.Save();
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        MessageBox.Show(subFolder.Name + "\n" + ex.StackTrace, ex.GetType().ToString());
+                        new SettingsWindow().ShowDialog();
+                        return;
                     }
                 }
-            });
-
-            PlayingStatus.Content = "";
-            PlayingTitle.Text = "曲を選択してください";
-            PlayingArtist.Text = "クリックして再生します...";
+            }
+            await RefreshList();
         }
 
         private void PlaySong(string tag)
@@ -81,8 +85,8 @@ namespace osu_Player
 
             if (_channel != 0) StopSong();
 
-            Bass.BASS_SetDevice(1);
-            Bass.BASS_Init(1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
+            Bass.BASS_SetDevice(Settings.Default.AudioDevice);
+            Bass.BASS_Init(Settings.Default.AudioDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
             ChangeVolume(null, null);
             _channel = Bass.BASS_StreamCreateFile(data[2], 0L, 0L, BASSFlag.BASS_DEFAULT);
             _playing = tag;
@@ -248,6 +252,58 @@ namespace osu_Player
         private void MinimizeWindow(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
+        }
+
+        private void OpenSettings(object sender, RoutedEventArgs e)
+        {
+            WindowManager.ShowOrActivate<SettingsWindow>();
+        }
+
+        public async Task<int> RefreshList()
+        {
+            StopSong();
+
+            if (!Directory.Exists(Settings.Default.OsuPath + @"\Songs"))
+            {
+                MessageBox.Show("正しい osu! フォルダの場所を指定してください。", "osu! Player");
+                OpenSettings(null, null);
+                return 0;
+            }
+
+            PlayingStatus.Content = "";
+            PlayingTitle.Text = "曲を検索しています";
+            PlayingArtist.Text = "しばらくお待ちください...";
+
+            await Task.Run(() =>
+            {
+                _songs.Clear();
+
+                var parent = new DirectoryInfo(Settings.Default.OsuPath + @"\Songs");
+                var subFolders = parent.GetDirectories("*", SearchOption.TopDirectoryOnly);
+                foreach (var subFolder in subFolders)
+                {
+                    try
+                    {
+                        var song = new Song(subFolder);
+                        if (song.IsBeatmap) _songs.Add(song);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(subFolder.Name + "\n" + ex.StackTrace, ex.GetType().ToString());
+                    }
+                }
+            });
+
+            PlayingStatus.Content = "";
+            PlayingTitle.Text = "曲を選択してください";
+            PlayingArtist.Text = "クリックして再生します...";
+
+            return 0;
+        }
+
+        public static MainWindow GetInstance()
+        {
+            return _instance;
         }
     }
 }

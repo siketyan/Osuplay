@@ -37,6 +37,14 @@
 
             <StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Height="24">
+                    <Button WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand"
+                            Margin="0,0,5,0" Click="OpenSettings">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF"></Label>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
                     <Button Template="{StaticResource WindowControlButtonTemplate}" Click="MinimizeWindow"
                             WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand">0</Button>
                     <Button Template="{StaticResource WindowControlButtonTemplate}" Click="CloseWindow"

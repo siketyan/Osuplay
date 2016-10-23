@@ -3,10 +3,32 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:osu_Player"
-        mc:Ignorable="d"
-        Title="SettingsWindow" Height="300" Width="300">
+        mc:Ignorable="d" Style="{StaticResource SettingsWindowStyle}"
+        Title="SettingsWindow" Height="165" Width="361">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="26" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Background="#FF66AA">
+            <DockPanel Margin="5,2" LastChildFill="False">
+                <Label FontFamily="Resources/#FontAwesome" Foreground="White"></Label>
+                <Label Foreground="White" Padding="3,3,0,0">Settings - osu! Player</Label>
+                <Button Template="{StaticResource WindowControlButtonTemplate}" Click="CloseWindow"
+                        WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand" DockPanel.Dock="Right">r</Button>
+            </DockPanel>
+        </Grid>
         
+        <StackPanel Grid.Row="1" Margin="15,10">
+            <Label>osu! フォルダのパス</Label>
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Background="Transparent" BorderBrush="#CCC"
+                        Padding="5,1" Margin="0,0,0,0" Click="OpenFolderDialog">...</Button>
+                <TextBox x:Name="OsuPath" DockPanel.Dock="Right" />
+            </DockPanel>
+            <Label Margin="0,10,0,0">使用するオーディオデバイス</Label>
+            <ComboBox x:Name="AudioDevice" />
+        </StackPanel>
     </Grid>
 </Window>

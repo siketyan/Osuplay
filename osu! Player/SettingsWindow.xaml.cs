@@ -1,27 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using osu_Player.Properties;
+using Un4seen.Bass;
 
 namespace osu_Player
 {
     /// <summary>
     /// SettingsWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class SettingsWindow : Window
+    public partial class SettingsWindow
     {
         public SettingsWindow()
         {
             InitializeComponent();
+
+            foreach (var bdi in Bass.BASS_GetDeviceInfos())
+            {
+                var dname = "";
+                if (bdi.IsDefault) dname = "*";
+                dname += bdi.name;
+                AudioDevice.Items.Add(dname);
+            }
+
+            OsuPath.Text = Settings.Default.OsuPath;
+            AudioDevice.SelectedIndex = Settings.Default.AudioDevice;
+        }
+
+        private void OpenFolderDialog(object sender, RoutedEventArgs e)
+        {
+            var dialog = new FolderBrowserDialog
+            {
+                ShowNewFolderButton = false,
+                SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!"
+            };
+
+            dialog.ShowDialog();
+            if (dialog.SelectedPath == "") return;
+            OsuPath.Text = dialog.SelectedPath;
+        }
+
+        private async void CloseWindow(object sender, RoutedEventArgs e)
+        {
+            Settings.Default.OsuPath = OsuPath.Text;
+            Settings.Default.AudioDevice = AudioDevice.SelectedIndex;
+            Settings.Default.Save();
+            Close();
+
+            await MainWindow.GetInstance().RefreshList();
         }
     }
 }
