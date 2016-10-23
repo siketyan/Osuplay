@@ -1,0 +1,15 @@
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\bin\Debug\osu! Player.exe.config
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\bin\Debug\osu! Player.exe
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\obj\Debug\osu! Player.csprojResolveAssemblyReference.cache
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\obj\Debug\Generic.baml
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\obj\Debug\MainWindow.baml
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\obj\Debug\MainWindow.g.cs
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\obj\Debug\App.g.cs
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\obj\Debug\osu! Player_MarkupCompile.cache
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\obj\Debug\osu! Player_MarkupCompile.lref
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\obj\Debug\App.baml
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\obj\Debug\osu! Player.g.resources
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\obj\Debug\osu_Player.Properties.Resources.resources
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\obj\Debug\osu! Player.csproj.GenerateResource.Cache
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\obj\Debug\osu! Player.exe
+c:\users\siketyan\documents\visual studio 2015\Projects\osu! Player\osu! Player\obj\Debug\GeneratedInternalTypeHelper.g.cs
