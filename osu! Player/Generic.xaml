@@ -17,6 +17,7 @@
         <Setter Property="BorderBrush" Value="#FFFF66AA"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Foreground" Value="White"/>
+        <Setter Property="WindowChrome.GlassFrameThickness" Value="0" />
     </Style>
 
     <Style TargetType="{x:Type Window}" x:Key="SettingsWindowStyle">

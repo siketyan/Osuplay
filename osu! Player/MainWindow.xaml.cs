@@ -1,10 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using osu_Player.Properties;
@@ -27,6 +29,11 @@ namespace osu_Player
             }
         }
 
+        // ウィンドウメッセージ
+        private const int WM_SIZE = 0x0005;
+        private const int WM_ENTERSIZEMOVE = 0x0231;
+        private const int WM_EXITSIZEMOVE = 0x0232;
+        
         private static MainWindow _instance;
 
         private readonly DispatcherCollection<Song> _songs;
@@ -34,9 +41,12 @@ namespace osu_Player
         private readonly SolidColorBrush _brush = new SolidColorBrush(Color.FromRgb(34, 34, 34));
 
         private bool _isPausing;
+        private bool _isSizing;
         private int _channel;
         private string _playing;
         private RepeatMode _repeat = RepeatMode.RepeatAll;
+        private IntPtr lastLParam;
+        private IntPtr lastWParam;
 
         public MainWindow()
         {
@@ -53,16 +63,27 @@ namespace osu_Player
 
         private async void Init(object sender, RoutedEventArgs e)
         {
+            var hsrc = HwndSource.FromVisual(this) as HwndSource;
+            hsrc.AddHook(WndProc);
+
+            var assemblyVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            if (Settings.Default.AssemblyVersion != assemblyVersion)
+            {
+                Settings.Default.Upgrade();
+                Settings.Default.AssemblyVersion = assemblyVersion;
+                Settings.Default.Save();
+            }
+
             if (Settings.Default.OsuPath == "")
             {
                 if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!"))
                 {
                     var result = MessageBox.Show(
-                        "既定の場所にosu!フォルダが見つかりました。このままこのフォルダに設定しますか？",
+                        "既定の場所にosu!フォルダが見つかりました。他の場所のosu!フォルダを使用しますか？",
                         "osu! Player", MessageBoxButton.YesNo
                     );
 
-                    if (result == MessageBoxResult.Yes)
+                    if (result == MessageBoxResult.No)
                     {
                         Settings.Default.OsuPath =
                             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!";
@@ -70,7 +91,7 @@ namespace osu_Player
                     }
                     else
                     {
-                        new SettingsWindow().ShowDialog();
+                        new SettingsWindow { Owner = this }.ShowDialog();
                         return;
                     }
                 }
@@ -270,49 +291,97 @@ namespace osu_Player
 
         public async Task<int> RefreshList()
         {
-            StopSong();
-
-            if (!Directory.Exists(Settings.Default.OsuPath + @"\Songs"))
+            try
             {
-                MessageBox.Show("正しい osu! フォルダの場所を指定してください。", "osu! Player");
-                OpenSettings(null, null);
-                return 0;
+                StopSong();
+
+                if (!Directory.Exists(Settings.Default.OsuPath + @"\Songs"))
+                {
+                    MessageBox.Show("正しい osu! フォルダの場所を指定してください。", "osu! Player");
+                    OpenSettings(null, null);
+                    return 0;
+                }
+
+                PlayingStatus.Content = "";
+                PlayingTitle.Text = "曲を検索しています";
+                PlayingArtist.Text = "しばらくお待ちください...";
+
+                await Task.Run(() =>
+                {
+                    _songs.Clear();
+
+                    var parent = new DirectoryInfo(Settings.Default.OsuPath + @"\Songs");
+                    var subFolders = parent.GetDirectories("*", SearchOption.TopDirectoryOnly);
+                    foreach (var subFolder in subFolders)
+                    {
+                        try
+                        {
+                            var song = new Song(subFolder);
+                            if (song.IsBeatmap) _songs.Add(song);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message + "\n" + ex.StackTrace, ex.GetType().ToString());
+                        }
+                    }
+                });
+
+                PlayingStatus.Content = "";
+                PlayingTitle.Text = "曲を選択してください";
+                PlayingArtist.Text = "クリックして再生します...";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\n" + ex.StackTrace, ex.GetType().ToString());
             }
 
-            PlayingStatus.Content = "";
-            PlayingTitle.Text = "曲を検索しています";
-            PlayingArtist.Text = "しばらくお待ちください...";
-
-            await Task.Run(() =>
-            {
-                _songs.Clear();
-
-                var parent = new DirectoryInfo(Settings.Default.OsuPath + @"\Songs");
-                var subFolders = parent.GetDirectories("*", SearchOption.TopDirectoryOnly);
-                foreach (var subFolder in subFolders)
-                {
-                    try
-                    {
-                        var song = new Song(subFolder);
-                        if (song.IsBeatmap) _songs.Add(song);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message + "\n" + ex.StackTrace, ex.GetType().ToString());
-                    }
-                }
-            });
-
-            PlayingStatus.Content = "";
-            PlayingTitle.Text = "曲を選択してください";
-            PlayingArtist.Text = "クリックして再生します...";
-
             return 0;
+        }
+
+        private void ChangeMargin(object sender, EventArgs e)
+        {
+            switch (WindowState)
+            {
+                case WindowState.Maximized:
+                    LayoutRoot.Margin = new Thickness(7);
+                    break;
+
+                default:
+                    LayoutRoot.Margin = new Thickness(0);
+                    break;
+            }
         }
 
         public static MainWindow GetInstance()
         {
             return _instance;
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern bool PostMessage(IntPtr hWnd, Int32 Msg, IntPtr wParam, IntPtr lParam);
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            switch (msg)
+            {
+                case WM_ENTERSIZEMOVE:
+                    _isSizing = true;
+                    break;
+                case WM_EXITSIZEMOVE:
+                    _isSizing = false;
+                    PostMessage(hwnd, WM_SIZE, lastWParam, lastLParam);
+                    break;
+                case WM_SIZE:
+                    if (_isSizing)
+                    {
+                        handled = true;
+                        
+                        lastLParam = lParam;
+                        lastWParam = wParam;
+                    }
+                    break;
+            }
+            return IntPtr.Zero;
         }
     }
 }

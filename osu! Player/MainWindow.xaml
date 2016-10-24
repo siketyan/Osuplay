@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" Style="{DynamicResource DefaultWindowStyle}"
         Title="osu! Player" Height="494" Width="330" Loaded="Init"
-        Closing="ClearBass" Icon="Resources/icon.ico">
+        Closing="ClearBass" Icon="Resources/icon.ico" StateChanged="ChangeMargin">
     <Window.Resources>
         <DataTemplate x:Key="SongsListTemplate">
             <DockPanel HorizontalAlignment="Stretch" Width="Auto" LastChildFill="True"
@@ -26,7 +26,7 @@
         </DataTemplate>
     </Window.Resources>
 
-    <Grid>
+    <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="70" />
             <RowDefinition />

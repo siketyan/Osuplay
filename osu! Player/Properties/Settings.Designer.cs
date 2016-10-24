@@ -58,5 +58,16 @@ namespace osu_Player.Properties {
                 this["VolumeLimit"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Version AssemblyVersion {
+            get {
+                return ((global::System.Version)(this["AssemblyVersion"]));
+            }
+            set {
+                this["AssemblyVersion"] = value;
+            }
+        }
     }
 }
