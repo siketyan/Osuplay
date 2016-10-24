@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-using osu_Player;
 
-namespace GrapeN
+namespace osu_Player
 {
     public static class WindowManager
     {
@@ -15,8 +14,7 @@ namespace GrapeN
             if (window == null)
             {
                 // 開かれてなかったら開く
-                window = new TWindow();
-                window.Owner = MainWindow.GetInstance();
+                window = new TWindow { Owner = MainWindow.GetInstance() };
                 window.Show();
             }
             else

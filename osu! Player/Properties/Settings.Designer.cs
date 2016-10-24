@@ -46,5 +46,17 @@ namespace osu_Player.Properties {
                 this["AudioDevice"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        public int VolumeLimit {
+            get {
+                return ((int)(this["VolumeLimit"]));
+            }
+            set {
+                this["VolumeLimit"] = value;
+            }
+        }
     }
 }

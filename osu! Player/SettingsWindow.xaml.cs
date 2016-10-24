@@ -2,6 +2,7 @@
 using System.Windows;
 using osu_Player.Properties;
 using Un4seen.Bass;
+using Un4seen.Bass.AddOn.Fx;
 
 namespace osu_Player
 {
@@ -24,6 +25,7 @@ namespace osu_Player
 
             OsuPath.Text = Settings.Default.OsuPath;
             AudioDevice.SelectedIndex = Settings.Default.AudioDevice;
+            VolumeLimit.Text = "1/" + Settings.Default.VolumeLimit;
         }
 
         private void OpenFolderDialog(object sender, RoutedEventArgs e)
@@ -43,6 +45,7 @@ namespace osu_Player
         {
             Settings.Default.OsuPath = OsuPath.Text;
             Settings.Default.AudioDevice = AudioDevice.SelectedIndex;
+            Settings.Default.VolumeLimit = int.Parse(VolumeLimit.Text.Split('/')[1]);
             Settings.Default.Save();
             Close();
 

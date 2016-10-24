@@ -51,7 +51,7 @@ using System.Windows;
 // すべての値を指定するか、下のように '*' を使ってビルドおよびリビジョン番号を 
 // 既定値にすることができます:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.1.1")]
-[assembly: AssemblyFileVersion("1.0.1.1")]
+[assembly: AssemblyVersion("1.0.3.3")]
+[assembly: AssemblyFileVersion("1.0.3.3")]
 [assembly: Guid("05EA8BF5-DA65-4EF0-BE35-B5CE28169F5E")]
 

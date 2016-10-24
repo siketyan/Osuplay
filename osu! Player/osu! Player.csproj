@@ -73,7 +73,6 @@
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Song.cs" />
-    <Compile Include="Thumbnail.cs" />
     <Compile Include="WindowManager.cs" />
     <Page Include="Generic.xaml">
       <SubType>Designer</SubType>

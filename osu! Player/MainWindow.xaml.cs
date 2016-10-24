@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using GrapeN;
 using osu_Player.Properties;
 using Un4seen.Bass;
 
@@ -84,6 +83,12 @@ namespace osu_Player
             var data = tag.Split('\t');
 
             if (_channel != 0) StopSong();
+            if (Settings.Default.AudioDevice == 0)
+            {
+                MessageBox.Show("オーディオデバイスを設定してください。");
+                OpenSettings(null, null);
+                return;
+            }
 
             Bass.BASS_SetDevice(Settings.Default.AudioDevice);
             Bass.BASS_Init(Settings.Default.AudioDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
@@ -103,7 +108,7 @@ namespace osu_Player
 
         private void PlaySong(object sender, MouseButtonEventArgs e)
         {
-            PlaySong((string)((Border)sender).Tag);
+            PlaySong((string)((DockPanel)sender).Tag);
         }
 
         private void PauseSong(object sender, MouseButtonEventArgs e)
@@ -144,6 +149,7 @@ namespace osu_Player
             PlayingStatus.Content = "";
             PlayingTitle.Text = "曲を選択してください";
             PlayingArtist.Text = "クリックして再生します...";
+            PlayingProgress.Value = PlayingProgress.Minimum;
         }
 
         private void ChangeRepeatMode(object sender, MouseButtonEventArgs e)
@@ -178,7 +184,7 @@ namespace osu_Player
 
         private void ChangeVolume(object sender, RoutedEventArgs e)
         {
-            Bass.BASS_SetVolume((float)(Volume.Value/Volume.Maximum)/2);
+            Bass.BASS_SetVolume((float)(Volume.Value / Volume.Maximum / Settings.Default.VolumeLimit));
         }
         
         private void TimerTick(object sender, EventArgs e)
@@ -207,6 +213,7 @@ namespace osu_Player
                                 PlayingTitle.Text = "曲を選択してください";
                                 PlayingArtist.Text = "クリックして再生します...";
                                 SongsList.SelectedIndex = -1;
+                                _timer.Stop();
                                 break;
 
                             case RepeatMode.RepeatSong:
@@ -217,10 +224,12 @@ namespace osu_Player
                                 if (SongsList.SelectedIndex != _songs.Count - 1)
                                 {
                                     SongsList.SelectedIndex++;
+                                    _timer.Stop();
                                     PlaySong(_songs[SongsList.SelectedIndex].Tag);
                                     break;
                                 }
 
+                                _timer.Stop();
                                 PlaySong(_songs[0].Tag);
                                 SongsList.SelectedIndex = 0;
                                 break;
@@ -289,7 +298,7 @@ namespace osu_Player
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(subFolder.Name + "\n" + ex.StackTrace, ex.GetType().ToString());
+                        MessageBox.Show(ex.Message + "\n" + ex.StackTrace, ex.GetType().ToString());
                     }
                 }
             });

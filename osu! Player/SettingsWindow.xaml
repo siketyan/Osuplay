@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" Style="{StaticResource SettingsWindowStyle}"
-        Title="SettingsWindow" Height="165" Width="361">
+        Title="SettingsWindow" Height="224" Width="361" WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="26" />
@@ -27,8 +27,18 @@
                         Padding="5,1" Margin="0,0,0,0" Click="OpenFolderDialog">...</Button>
                 <TextBox x:Name="OsuPath" DockPanel.Dock="Right" />
             </DockPanel>
+            
             <Label Margin="0,10,0,0">使用するオーディオデバイス</Label>
             <ComboBox x:Name="AudioDevice" />
+
+            <Label Margin="0,10,0,0">音量制限</Label>
+            <ComboBox x:Name="VolumeLimit">
+                <ComboBoxItem>1/8</ComboBoxItem>
+                <ComboBoxItem>1/6</ComboBoxItem>
+                <ComboBoxItem>1/4</ComboBoxItem>
+                <ComboBoxItem>1/2</ComboBoxItem>
+                <ComboBoxItem>1/1</ComboBoxItem>
+            </ComboBox>
         </StackPanel>
     </Grid>
 </Window>

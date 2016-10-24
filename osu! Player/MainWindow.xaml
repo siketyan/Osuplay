@@ -3,24 +3,26 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:l="clr-namespace:osu_Player"
         mc:Ignorable="d" Style="{DynamicResource DefaultWindowStyle}"
-        Title="osu! Player" Height="494" Width="330" Loaded="Init" Closing="ClearBass" Icon="Resources/icon.ico">
+        Title="osu! Player" Height="494" Width="330" Loaded="Init"
+        Closing="ClearBass" Icon="Resources/icon.ico">
     <Window.Resources>
         <DataTemplate x:Key="SongsListTemplate">
-            <Border Margin="5,2" Tag="{Binding Tag}" MouseLeftButtonDown="PlaySong"
-                    HorizontalAlignment="Stretch" Width="Auto" DockPanel.Dock="Top">
-                <DockPanel HorizontalAlignment="Stretch" Width="Auto" LastChildFill="True">
-                    <l:Thumbnail Width="48" Height="36" DockPanel.Dock="Left"
-                                 Stretch="UniformToFill" Source="{Binding ThumbnailPath}"></l:Thumbnail>
-                    <StackPanel Margin="5,0,0,0" DockPanel.Dock="Left">
-                        <TextBlock Foreground="#272727" Padding="5,1" FontWeight="Bold" Text="{Binding Title}"
+            <DockPanel HorizontalAlignment="Stretch" Width="Auto" LastChildFill="True"
+                           Margin="5,2" Tag="{Binding Tag}" MouseLeftButtonDown="PlaySong">
+                <Image Width="48" Height="36" DockPanel.Dock="Left" Stretch="UniformToFill">
+                    <Image.Source>
+                        <BitmapImage DecodePixelWidth="48"
+                                     UriSource="{Binding ThumbnailPath}" />
+                    </Image.Source>
+                </Image>
+                <StackPanel Margin="5,0,0,0" DockPanel.Dock="Left">
+                    <TextBlock Foreground="#272727" Padding="5,1" FontWeight="Bold" Text="{Binding Title}"
                                    TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Foreground="#6A6A6A" Padding="5,0" Text="{Binding Artist}"
+                    <TextBlock Foreground="#6A6A6A" Padding="5,0" Text="{Binding Artist}"
                                    TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
-                    </StackPanel>
-                </DockPanel>
-            </Border>
+                </StackPanel>
+            </DockPanel>
         </DataTemplate>
     </Window.Resources>
 
@@ -81,23 +83,30 @@
                     </StackPanel>
                 </Grid>
                 <ProgressBar x:Name="PlayingProgress" Height="4" BorderThickness="0"
-                             Background="White" Foreground="#FF66AA" Maximum="1000"></ProgressBar>
+                             Background="White" Foreground="#FF66AA" Maximum="1024"></ProgressBar>
             </StackPanel>
         </Grid>
 
-        <ListBox x:Name="SongsList" Grid.Row="1" Padding="5" HorizontalContentAlignment="Stretch"
-                 ItemTemplate="{DynamicResource SongsListTemplate}" BorderThickness="0"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ListBox.ItemContainerStyle>
-                <Style>
-                    <Setter Property="DockPanel.Dock" Value="Top" />
-                </Style>
-            </ListBox.ItemContainerStyle>
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <DockPanel IsItemsHost="True" LastChildFill="False"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-        </ListBox>
+        <ScrollViewer Grid.Row="1" Style="{StaticResource CustomScrollViewerStyle}"
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Visible"
+                      HorizontalContentAlignment="Stretch">
+            <ListBox x:Name="SongsList" HorizontalContentAlignment="Stretch"
+                     ItemTemplate="{DynamicResource SongsListTemplate}" BorderThickness="0"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.Template>
+                    <ControlTemplate TargetType="ItemsControl">
+                        <Border>
+                            <ItemsPresenter />
+                        </Border>
+                    </ControlTemplate>
+                </ListBox.Template>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel VirtualizationMode="Recycling" IsVirtualizing="True" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+        </ScrollViewer>
     </Grid>
 </Window>

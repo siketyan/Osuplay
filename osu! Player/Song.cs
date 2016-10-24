@@ -62,6 +62,8 @@ namespace osu_Player
 
                 Tag = Title + "\t" + Artist + "\t" + AudioPath;
             }
+            
+            stream.Dispose();
 
             if (ThumbnailPath == null || !File.Exists(ThumbnailPath))
             {
