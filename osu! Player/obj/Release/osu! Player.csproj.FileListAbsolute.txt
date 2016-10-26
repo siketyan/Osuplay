@@ -22,13 +22,11 @@ C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Play
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\SettingsWindow.g.cs
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\App.g.cs
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\osu! Player_Content.g.cs
-C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\GeneratedInternalTypeHelper.g.cs
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\osu! Player_MarkupCompile.cache
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\osu! Player_MarkupCompile.lref
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\osu! Player.exe
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\bin\Release\osu! Player.exe.config
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\bin\Release\osu! Player.exe
-C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\bin\Release\Bass.Net.dll
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\bin\Release\Bass.Net.xml
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\App.baml
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\MainWindow.baml

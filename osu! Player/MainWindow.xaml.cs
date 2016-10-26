@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using osu_Player.Properties;
 using Un4seen.Bass;
+using System.Linq;
 
 namespace osu_Player
 {
@@ -36,7 +37,7 @@ namespace osu_Player
         
         private static MainWindow _instance;
 
-        private readonly DispatcherCollection<Song> _songs;
+        private DispatcherCollection<Song> _songs;
         private readonly DispatcherTimer _timer;
         private readonly SolidColorBrush _brush = new SolidColorBrush(Color.FromRgb(34, 34, 34));
 
@@ -113,10 +114,10 @@ namespace osu_Player
 
             Bass.BASS_SetDevice(Settings.Default.AudioDevice);
             Bass.BASS_Init(Settings.Default.AudioDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
-            ChangeVolume(null, null);
             _channel = Bass.BASS_StreamCreateFile(data[2], 0L, 0L, BASSFlag.BASS_DEFAULT);
             _playing = tag;
             _timer.Start();
+            ChangeVolume(null, null);
 
             if (_channel == 0) return;
             Bass.BASS_ChannelPlay(_channel, false);
@@ -203,9 +204,28 @@ namespace osu_Player
             }
         }
 
+        private void ShuffleSongs(object sender, MouseButtonEventArgs e)
+        {
+            Random rng = new Random();
+            int n = _songs.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                Song value = _songs[k];
+                _songs[k] = _songs[n];
+                _songs[n] = value;
+            }
+            SongsList.InvalidateArrange();
+            SongsList.UpdateLayout();
+        }
+
         private void ChangeVolume(object sender, RoutedEventArgs e)
         {
-            Bass.BASS_SetVolume((float)(Volume.Value / Volume.Maximum / Settings.Default.VolumeLimit));
+            Bass.BASS_ChannelSetAttribute(
+                _channel, BASSAttribute.BASS_ATTRIB_VOL,
+                (float)(Volume.Value / Volume.Maximum)
+            );
         }
         
         private void TimerTick(object sender, EventArgs e)

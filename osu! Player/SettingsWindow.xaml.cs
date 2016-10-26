@@ -2,7 +2,6 @@
 using System.Windows;
 using osu_Player.Properties;
 using Un4seen.Bass;
-using Un4seen.Bass.AddOn.Fx;
 
 namespace osu_Player
 {
@@ -13,7 +12,6 @@ namespace osu_Player
     {
         private string _currentOsuPath;
         private int _currentAudioDevice;
-        private int _currentVolumeLimit;
 
         public SettingsWindow()
         {
@@ -29,8 +27,6 @@ namespace osu_Player
             
             OsuPath.Text = _currentOsuPath = Settings.Default.OsuPath;
             AudioDevice.SelectedIndex = _currentAudioDevice = Settings.Default.AudioDevice;
-            VolumeLimit.Text = "1/" + Settings.Default.VolumeLimit;
-            _currentVolumeLimit = Settings.Default.VolumeLimit;
         }
 
         private void OpenFolderDialog(object sender, RoutedEventArgs e)
@@ -50,14 +46,12 @@ namespace osu_Player
         {
             Settings.Default.OsuPath = OsuPath.Text;
             Settings.Default.AudioDevice = AudioDevice.SelectedIndex;
-            Settings.Default.VolumeLimit = int.Parse(VolumeLimit.Text.Split('/')[1]);
             Settings.Default.Save();
             MainWindow.GetInstance().Activate();
             Close();
 
             if (_currentOsuPath == OsuPath.Text
-             && _currentAudioDevice == AudioDevice.SelectedIndex
-             && _currentVolumeLimit == int.Parse(VolumeLimit.Text.Split('/')[1]))
+             && _currentAudioDevice == AudioDevice.SelectedIndex)
                 return;
 
             await MainWindow.GetInstance().RefreshList();

@@ -8,9 +8,6 @@
     <Setting Name="AudioDevice" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="VolumeLimit" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">6</Value>
-    </Setting>
     <Setting Name="AssemblyVersion" Type="System.Version" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

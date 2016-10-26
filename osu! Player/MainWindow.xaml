@@ -56,7 +56,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="37" />
                         <ColumnDefinition />
-                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="66" />
                     </Grid.ColumnDefinitions>
                     <Label x:Name="PlayingStatus" FontFamily="Resources/#FontAwesome" Foreground="White" IsEnabled="False"
                            FontSize="27" DockPanel.Dock="Left" Width="37" Height="37" Padding="0" MouseLeftButtonDown="PauseSong"
@@ -69,7 +69,9 @@
                                    TextTrimming="CharacterEllipsis">しばらくお待ちください...</TextBlock>
                     </StackPanel>
                     <StackPanel Grid.Column="2" Margin="0,3,0,0">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                        <StackPanel Orientation="Horizontal" Margin="17,0,0,2">
+                            <!--<Label Style="{StaticResource ActionLabelStyle}" FontSize="14"  Foreground="#FFF"
+                                   Padding="0,0,0,2" Margin="0,0,5,0"  MouseLeftButtonDown="ShuffleSongs"></Label>-->
                             <Label x:Name="NoRepeat" Style="{StaticResource ActionLabelStyle}" FontSize="13"
                                    Padding="0,0,0,1" Tag="N"  MouseLeftButtonDown="ChangeRepeatMode"></Label>
                             <Label x:Name="RepeatSong" Style="{StaticResource ActionLabelStyle}"
@@ -77,9 +79,13 @@
                             <Label x:Name="RepeatAll" Style="{StaticResource ActionLabelStyle}" Margin="0,0,0,1.5"
                                    Foreground="#FFF" Tag="A" MouseLeftButtonDown="ChangeRepeatMode"></Label>
                         </StackPanel>
-                        <Slider x:Name="Volume" Style="{StaticResource HorizontalSlider}" Foreground="#FFF"
-                                ValueChanged="ChangeVolume" Value="25" Maximum="100"
-                                WindowChrome.IsHitTestVisibleInChrome="True" />
+                        <StackPanel Orientation="Horizontal">
+                            <Label Style="{StaticResource ActionLabelStyle}"
+                                   Margin="0,0,2,2" Foreground="#FFF"></Label>
+                            <Slider x:Name="Volume" Style="{StaticResource HorizontalSlider}" Foreground="#FFF"
+                                    ValueChanged="ChangeVolume" Value="50" Maximum="100" Width="48"
+                                    WindowChrome.IsHitTestVisibleInChrome="True" />
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
                 <ProgressBar x:Name="PlayingProgress" Height="4" BorderThickness="0"
