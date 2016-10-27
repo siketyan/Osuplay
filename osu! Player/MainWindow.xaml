@@ -69,7 +69,7 @@
                                    TextTrimming="CharacterEllipsis">しばらくお待ちください...</TextBlock>
                     </StackPanel>
                     <StackPanel Grid.Column="2" Margin="0,3,0,0">
-                        <StackPanel Orientation="Horizontal" Margin="17,0,0,2">
+                        <StackPanel Orientation="Horizontal" Margin="17,0,0,0">
                             <!--<Label Style="{StaticResource ActionLabelStyle}" FontSize="14"  Foreground="#FFF"
                                    Padding="0,0,0,2" Margin="0,0,5,0"  MouseLeftButtonDown="ShuffleSongs"></Label>-->
                             <Label x:Name="NoRepeat" Style="{StaticResource ActionLabelStyle}" FontSize="13"
@@ -81,14 +81,14 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Style="{StaticResource ActionLabelStyle}"
-                                   Margin="0,0,2,2" Foreground="#FFF"></Label>
+                                   Margin="0,0,2,0" Foreground="#FFF"></Label>
                             <Slider x:Name="Volume" Style="{StaticResource HorizontalSlider}" Foreground="#FFF"
                                     ValueChanged="ChangeVolume" Value="50" Maximum="100" Width="48"
                                     WindowChrome.IsHitTestVisibleInChrome="True" />
                         </StackPanel>
                     </StackPanel>
                 </Grid>
-                <ProgressBar x:Name="PlayingProgress" Height="4" BorderThickness="0"
+                <ProgressBar x:Name="PlayingProgress" Height="4" BorderThickness="0" Value="50"
                              Background="White" Foreground="#FF66AA" Maximum="1024"></ProgressBar>
             </StackPanel>
         </Grid>
