@@ -1,0 +1,8 @@
+# Directories
+.vs/
+bin/
+obj/
+
+# Files
+*.dll
+*.otf
