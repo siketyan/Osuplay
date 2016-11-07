@@ -9,9 +9,9 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
-using osu_Player.Properties;
 using Un4seen.Bass;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace osu_Player
 {
@@ -20,6 +20,8 @@ namespace osu_Player
     /// </summary>
     public partial class MainWindow
     {
+        public Settings settings;
+
         private bool IsPausing
         {
             get { return _isPausing; }
@@ -64,31 +66,27 @@ namespace osu_Player
 
         private async void Init(object sender, RoutedEventArgs e)
         {
-            var hsrc = HwndSource.FromVisual(this) as HwndSource;
+            var hsrc = PresentationSource.FromVisual(this) as HwndSource;
             hsrc.AddHook(WndProc);
 
-            var assemblyVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            if (Settings.Default.AssemblyVersion != assemblyVersion)
-            {
-                Settings.Default.Upgrade();
-                Settings.Default.AssemblyVersion = assemblyVersion;
-                Settings.Default.Save();
-            }
+            if (!File.Exists("settings.osp")) SettingsManager.WriteSettings("settings.osp", new Settings());
+            settings = SettingsManager.ReadSettings("settings.osp");
+            if (settings.DisabledSongs == null) settings.DisabledSongs = new List<string>();
 
-            if (Settings.Default.OsuPath == "")
+            if (settings.OsuPath == null)
             {
                 if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!"))
                 {
                     var result = MessageBox.Show(
                         "既定の場所にosu!フォルダが見つかりました。他の場所のosu!フォルダを使用しますか？",
-                        "osu! Player", MessageBoxButton.YesNo
+                        "osu! Player", MessageBoxButton.YesNo, MessageBoxImage.Question
                     );
 
                     if (result == MessageBoxResult.No)
                     {
-                        Settings.Default.OsuPath =
+                        settings.OsuPath =
                             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!";
-                        Settings.Default.Save();
+                        SettingsManager.WriteSettings("settings.osp", settings);
                     }
                     else
                     {
@@ -105,15 +103,16 @@ namespace osu_Player
             var data = tag.Split('\t');
 
             if (_channel != 0) StopSong();
-            if (Settings.Default.AudioDevice == 0)
+            if (settings.AudioDevice == 0)
             {
                 MessageBox.Show("オーディオデバイスを設定してください。");
                 OpenSettings(null, null);
                 return;
             }
 
-            Bass.BASS_SetDevice(Settings.Default.AudioDevice);
-            Bass.BASS_Init(Settings.Default.AudioDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
+            BassNet.Registration(__Private.MAIL, __Private.CODE);
+            Bass.BASS_SetDevice(settings.AudioDevice);
+            Bass.BASS_Init(settings.AudioDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
             _channel = Bass.BASS_StreamCreateFile(data[2], 0L, 0L, BASSFlag.BASS_DEFAULT);
             _playing = tag;
             _timer.Start();
@@ -204,20 +203,9 @@ namespace osu_Player
             }
         }
 
-        private void ShuffleSongs(object sender, MouseButtonEventArgs e)
+        private async void ShuffleSongs(object sender, MouseButtonEventArgs e)
         {
-            Random rng = new Random();
-            int n = _songs.Count;
-            while (n > 1)
-            {
-                n--;
-                int k = rng.Next(n + 1);
-                Song value = _songs[k];
-                _songs[k] = _songs[n];
-                _songs[n] = value;
-            }
-            SongsList.InvalidateArrange();
-            SongsList.UpdateLayout();
+            await RefreshList(true);
         }
 
         private void ChangeVolume(object sender, RoutedEventArgs e)
@@ -309,13 +297,35 @@ namespace osu_Player
             WindowManager.ShowOrActivate<SettingsWindow>();
         }
 
-        public async Task<int> RefreshList()
+        private void DisableSong(object sender, RoutedEventArgs e)
+        {
+            var tag = (string)((MenuItem)sender).Tag;
+
+            if (settings.DisabledSongs.Contains(tag))
+                MessageBox.Show(
+                    "既に非表示されています。", "osu! Player",
+                    MessageBoxButton.OK, MessageBoxImage.Error
+                );
+
+            settings.DisabledSongs.Add(tag);
+            SettingsManager.WriteSettings("settings.osp", settings);
+
+            foreach (var song in _songs)
+            {
+                if (song.Tag != tag) continue;
+
+                _songs.Remove(song);
+                break;
+            }
+        }
+
+        public async Task<int> RefreshList(bool doShuffle = false)
         {
             try
             {
                 StopSong();
 
-                if (!Directory.Exists(Settings.Default.OsuPath + @"\Songs"))
+                if (!Directory.Exists(settings.OsuPath + @"\Songs"))
                 {
                     MessageBox.Show("正しい osu! フォルダの場所を指定してください。", "osu! Player");
                     OpenSettings(null, null);
@@ -330,14 +340,18 @@ namespace osu_Player
                 {
                     _songs.Clear();
 
-                    var parent = new DirectoryInfo(Settings.Default.OsuPath + @"\Songs");
+                    var parent = new DirectoryInfo(settings.OsuPath + @"\Songs");
                     var subFolders = parent.GetDirectories("*", SearchOption.TopDirectoryOnly);
+
+                    if (doShuffle) subFolders = subFolders.OrderBy(i => Guid.NewGuid()).ToArray();
                     foreach (var subFolder in subFolders)
                     {
                         try
                         {
                             var song = new Song(subFolder);
-                            if (song.IsBeatmap) _songs.Add(song);
+                            if (!song.IsBeatmap) continue;
+                            if (settings.DisabledSongs.Contains(song.Tag)) continue;
+                            _songs.Add(song);
                         }
                         catch (Exception ex)
                         {
@@ -369,6 +383,22 @@ namespace osu_Player
                 default:
                     LayoutRoot.Margin = new Thickness(0);
                     break;
+            }
+        }
+
+        private void ChangePin(object sender, RoutedEventArgs e)
+        {          
+            if (Pin.Visibility == Visibility.Visible)
+            {
+                Topmost = true;
+                Pin.Visibility = Visibility.Collapsed;
+                UnPin.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Topmost = false;
+                UnPin.Visibility = Visibility.Collapsed;
+                Pin.Visibility = Visibility.Visible;
             }
         }
 

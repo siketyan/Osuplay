@@ -43,8 +43,9 @@
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Bass.Net">
-      <HintPath>..\..\..\..\..\Downloads\Bass24.Net\v4.5\Bass.Net.dll</HintPath>
+    <Reference Include="Bass.Net, Version=2.4.12.3, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libraries\Bass24.Net\v4.5\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -67,14 +68,24 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DisabledSongsWIndow.xaml.cs">
+      <DependentUpon>DisabledSongsWIndow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FolderBrowserDialog.cs" />
     <Compile Include="DispatcherCollection.cs" />
     <Compile Include="RepeatMode.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Settings1.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Song.cs" />
     <Compile Include="WindowManager.cs" />
+    <Compile Include="__Private.cs" />
+    <Page Include="DisabledSongsWIndow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -128,7 +139,9 @@
     <Resource Include="Resources\back.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bass.dll" />
+    <None Include="bass.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Resource Include="Resources\unknown.png" />
     <Resource Include="Resources\icon.ico" />
   </ItemGroup>

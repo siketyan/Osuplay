@@ -22,40 +22,5 @@ namespace osu_Player.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OsuPath {
-            get {
-                return ((string)(this["OsuPath"]));
-            }
-            set {
-                this["OsuPath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int AudioDevice {
-            get {
-                return ((int)(this["AudioDevice"]));
-            }
-            set {
-                this["AudioDevice"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Version AssemblyVersion {
-            get {
-                return ((global::System.Version)(this["AssemblyVersion"]));
-            }
-            set {
-                this["AssemblyVersion"] = value;
-            }
-        }
     }
 }

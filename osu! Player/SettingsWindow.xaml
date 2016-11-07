@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" Style="{StaticResource SettingsWindowStyle}"
-        Title="Settings - osu! Player" Height="170" Width="361" WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d" Style="{StaticResource ToolWindowStyle}"
+        Title="Settings - osu! Player" Height="213" Width="360" WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
@@ -31,6 +31,9 @@
             
             <Label Margin="0,10,0,0">使用するオーディオデバイス</Label>
             <ComboBox x:Name="AudioDevice" />
+
+            <Button Margin="0,25,0,0" Height="25" Background="Transparent"
+                    BorderBrush="#CCC" Click="OpenDisabledSongs">非表示している曲の管理</Button>
         </StackPanel>
     </Grid>
 </Window>

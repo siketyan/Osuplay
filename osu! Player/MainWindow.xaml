@@ -10,6 +10,12 @@
         <DataTemplate x:Key="SongsListTemplate">
             <DockPanel HorizontalAlignment="Stretch" Width="Auto" LastChildFill="True"
                            Margin="5,2" Tag="{Binding Tag}" MouseLeftButtonDown="PlaySong">
+                <DockPanel.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="非表示" Tag="{Binding Tag}" Click="DisableSong" />
+                    </ContextMenu>
+                </DockPanel.ContextMenu>
+                
                 <Image Width="48" Height="36" DockPanel.Dock="Left" Stretch="UniformToFill">
                     <Image.Source>
                         <BitmapImage DecodePixelWidth="48"
@@ -47,6 +53,27 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
+                    <Button x:Name="Pin" WindowChrome.IsHitTestVisibleInChrome="True"
+                            Margin="0,0,3,0" Cursor="Hand" Click="ChangePin">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF" RenderTransformOrigin="0.5,0.5">
+                                    <Label.RenderTransform>
+                                        <RotateTransform Angle="90" />
+                                    </Label.RenderTransform>
+                                    <TextBlock></TextBlock>
+                                </Label>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <Button x:Name="UnPin" WindowChrome.IsHitTestVisibleInChrome="True"
+                            Margin="0,0,3,0" Cursor="Hand" Click="ChangePin" Visibility="Collapsed">
+                        <Button.Template>
+                            <ControlTemplate>
+                                <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF"></Label>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
                     <Button Template="{StaticResource WindowControlButtonTemplate}" Click="MinimizeWindow"
                             WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand">0</Button>
                     <Button Template="{StaticResource WindowControlButtonTemplate}" Click="CloseWindow"
@@ -56,7 +83,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="37" />
                         <ColumnDefinition />
-                        <ColumnDefinition Width="66" />
+                        <ColumnDefinition Width="70" />
                     </Grid.ColumnDefinitions>
                     <Label x:Name="PlayingStatus" FontFamily="Resources/#FontAwesome" Foreground="White" IsEnabled="False"
                            FontSize="27" DockPanel.Dock="Left" Width="37" Height="37" Padding="0" MouseLeftButtonDown="PauseSong"
@@ -69,9 +96,9 @@
                                    TextTrimming="CharacterEllipsis">しばらくお待ちください...</TextBlock>
                     </StackPanel>
                     <StackPanel Grid.Column="2" Margin="0,3,0,0">
-                        <StackPanel Orientation="Horizontal" Margin="17,0,0,0">
-                            <!--<Label Style="{StaticResource ActionLabelStyle}" FontSize="14"  Foreground="#FFF"
-                                   Padding="0,0,0,2" Margin="0,0,5,0"  MouseLeftButtonDown="ShuffleSongs"></Label>-->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                            <Label Style="{StaticResource ActionLabelStyle}" FontSize="14"  Foreground="#FFF"
+                                   Padding="0,0,0,2" Margin="0,0,5,0"  MouseLeftButtonDown="ShuffleSongs"></Label>
                             <Label x:Name="NoRepeat" Style="{StaticResource ActionLabelStyle}" FontSize="13"
                                    Padding="0,0,0,1" Tag="N"  MouseLeftButtonDown="ChangeRepeatMode"></Label>
                             <Label x:Name="RepeatSong" Style="{StaticResource ActionLabelStyle}"
@@ -88,7 +115,7 @@
                         </StackPanel>
                     </StackPanel>
                 </Grid>
-                <ProgressBar x:Name="PlayingProgress" Height="4" BorderThickness="0" Value="50"
+                <ProgressBar x:Name="PlayingProgress" Height="4" BorderThickness="0" Value="0"
                              Background="White" Foreground="#FF66AA" Maximum="1024"></ProgressBar>
             </StackPanel>
         </Grid>

@@ -10,12 +10,17 @@ namespace osu_Player
     /// </summary>
     public partial class SettingsWindow
     {
+        private bool _isDisabledSongsModified;
         private string _currentOsuPath;
         private int _currentAudioDevice;
+        private MainWindow _instance;
+        private Settings _settings;
 
         public SettingsWindow()
         {
             InitializeComponent();
+            _instance = MainWindow.GetInstance();
+            _settings = _instance.settings;
 
             foreach (var bdi in Bass.BASS_GetDeviceInfos())
             {
@@ -25,8 +30,8 @@ namespace osu_Player
                 AudioDevice.Items.Add(dname);
             }
             
-            OsuPath.Text = _currentOsuPath = Settings.Default.OsuPath;
-            AudioDevice.SelectedIndex = _currentAudioDevice = Settings.Default.AudioDevice;
+            OsuPath.Text = _currentOsuPath = _settings.OsuPath;
+            AudioDevice.SelectedIndex = _currentAudioDevice = _settings.AudioDevice;
         }
 
         private void OpenFolderDialog(object sender, RoutedEventArgs e)
@@ -42,17 +47,25 @@ namespace osu_Player
             OsuPath.Text = dialog.SelectedPath;
         }
 
+        private void OpenDisabledSongs(object sender, RoutedEventArgs e)
+        {
+            var window = new DisabledSongsWIndow();
+            window.Owner = this;
+            window.ShowDialog();
+            _isDisabledSongsModified = window.IsModified;
+        }
+
         private async void CloseWindow(object sender, RoutedEventArgs e)
         {
-            Settings.Default.OsuPath = OsuPath.Text;
-            Settings.Default.AudioDevice = AudioDevice.SelectedIndex;
-            Settings.Default.Save();
+            _settings.OsuPath = OsuPath.Text;
+            _settings.AudioDevice = AudioDevice.SelectedIndex;
+            _instance.settings = _settings;
+
+            SettingsManager.WriteSettings("settings.osp", _settings);
             MainWindow.GetInstance().Activate();
             Close();
 
-            if (_currentOsuPath == OsuPath.Text
-             && _currentAudioDevice == AudioDevice.SelectedIndex)
-                return;
+            if (_currentOsuPath == OsuPath.Text && !_isDisabledSongsModified) return;
 
             await MainWindow.GetInstance().RefreshList();
         }

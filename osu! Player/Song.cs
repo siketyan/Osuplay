@@ -59,16 +59,26 @@ namespace osu_Player
                     ThumbnailPath =
                         folder.FullName + @"\" + new Regex(@"^\d,\d,(\d,)?""(.+)""(,\d,\d)?$").Match(line).Groups[2];
                 }
-
-                Tag = Title + "\t" + Artist + "\t" + AudioPath;
             }
-            
-            stream.Dispose();
 
             if (ThumbnailPath == null || !File.Exists(ThumbnailPath))
             {
                 ThumbnailPath = "Resources/unknown.png";
             }
+
+            Tag = Title + "\t" + Artist + "\t" + AudioPath + "\t" + ThumbnailPath;
+            stream.Dispose();            
+        }
+
+        public Song(string tag)
+        {
+            var data = tag.Split('\t');
+
+            Title = data[0];
+            Artist = data[1];
+            AudioPath = data[2];
+            ThumbnailPath = data[3];
+            Tag = tag;
         }
     }
 }

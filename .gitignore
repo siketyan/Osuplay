@@ -6,3 +6,4 @@ obj/
 # Files
 *.dll
 *.otf
+__*.cs

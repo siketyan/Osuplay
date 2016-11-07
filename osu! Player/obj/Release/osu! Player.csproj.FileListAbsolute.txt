@@ -21,7 +21,6 @@ C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Play
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\MainWindow.g.cs
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\SettingsWindow.g.cs
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\App.g.cs
-C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\osu! Player_Content.g.cs
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\osu! Player_MarkupCompile.cache
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\osu! Player_MarkupCompile.lref
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\osu! Player.exe
@@ -34,3 +33,7 @@ C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Play
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\osu! Player.g.resources
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\osu_Player.Properties.Resources.resources
 C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\osu! Player.csproj.GenerateResource.Cache
+C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\bin\Release\bass.dll
+C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\bin\Release\Bass.Net.dll
+C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\DisabledSongsWIndow.g.cs
+C:\Users\Siketyan\Documents\Visual Studio 2015\Repositories\osu-Player\osu! Player\obj\Release\DisabledSongsWIndow.baml
