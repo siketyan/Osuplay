@@ -62,6 +62,7 @@ namespace osu_Player
 
         private bool _isPausing;
         private bool _isSizing;
+        private int _windowHeight;
         private int _channel;
         private string _playing;
         private RepeatMode _repeat = RepeatMode.RepeatAll;
@@ -418,6 +419,23 @@ namespace osu_Player
                 Topmost = false;
                 UnPin.Visibility = Visibility.Collapsed;
                 Pin.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void ChangeWindowMode(object sender, RoutedEventArgs e)
+        {
+            if ((int)ActualHeight == 72) // on Minimal Mode
+            {
+                MinHeight = 131;
+                Height = _windowHeight;
+                WindowMode.Content = "";
+            }
+            else // on Normal Mode
+            {
+                _windowHeight = (int)ActualHeight;
+                MinHeight = 0;
+                Height = 72;
+                WindowMode.Content = "";
             }
         }
 

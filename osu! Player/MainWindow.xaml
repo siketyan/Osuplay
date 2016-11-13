@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" Style="{DynamicResource DefaultWindowStyle}"
-        Title="osu! Player" Height="494" Width="330" Loaded="Init"
+        Title="osu! Player" MinHeight="131" Height="494" Width="330" Loaded="Init"
         Closing="ClearBass" Icon="Resources/icon.ico" StateChanged="ChangeMargin">
+    <!-- height: 494 -->
     <Window.Resources>
         <DataTemplate x:Key="SongsListTemplate">
             <DockPanel HorizontalAlignment="Stretch" Width="Auto" LastChildFill="True"
@@ -71,6 +72,15 @@
                         <Button.Template>
                             <ControlTemplate>
                                 <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF"></Label>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <Button x:Name="WindowMode"  WindowChrome.IsHitTestVisibleInChrome="True"
+                            Margin="0,0,3,0" Cursor="Hand" Click="ChangeWindowMode" Content="">
+                        <Button.Template>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF"
+                                       FontSize="17" Padding="3,2" Content="{TemplateBinding Content}" />
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
