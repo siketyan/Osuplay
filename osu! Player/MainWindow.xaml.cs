@@ -31,8 +31,25 @@ namespace osu_Player
                 _isPausing = value;
             }
         }
-
-        // ウィンドウメッセージ
+        private bool IsSearching
+        {
+            set
+            {
+                if (value)
+                {
+                      PlayingStatus.IsEnabled
+                    = ControlButtons.IsEnabled
+                    = false;
+                }
+                else
+                {
+                      PlayingStatus.IsEnabled
+                    = ControlButtons.IsEnabled
+                    = true;
+                }
+            }
+        }
+        
         private const int WM_SIZE = 0x0005;
         private const int WM_ENTERSIZEMOVE = 0x0231;
         private const int WM_EXITSIZEMOVE = 0x0232;
@@ -323,6 +340,7 @@ namespace osu_Player
         {
             try
             {
+                IsSearching = true;
                 StopSong();
 
                 if (!Directory.Exists(settings.OsuPath + @"\Songs"))
@@ -363,6 +381,7 @@ namespace osu_Player
                 PlayingStatus.Content = "";
                 PlayingTitle.Text = "曲を選択してください";
                 PlayingArtist.Text = "クリックして再生します...";
+                IsSearching = false;
             }
             catch (Exception ex)
             {
