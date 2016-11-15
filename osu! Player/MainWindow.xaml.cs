@@ -12,6 +12,8 @@ using System.Windows.Threading;
 using Un4seen.Bass;
 using System.Linq;
 using System.Collections.Generic;
+using Un4seen.Bass.AddOn.Fx;
+using System.Reflection;
 
 namespace osu_Player
 {
@@ -62,8 +64,10 @@ namespace osu_Player
 
         private bool _isPausing;
         private bool _isSizing;
+        private bool _isNightcore;
         private int _windowHeight;
         private int _channel;
+        private float _pitch;
         private string _playing;
         private RepeatMode _repeat = RepeatMode.RepeatAll;
         private IntPtr lastLParam;
@@ -77,6 +81,9 @@ namespace osu_Player
             _songs = new DispatcherCollection<Song>();
             _timer = new DispatcherTimer(DispatcherPriority.Normal) { Interval = TimeSpan.FromMilliseconds(100) };
             _timer.Tick += TimerTick;
+
+            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            BassNet.Registration(__Private.MAIL, __Private.CODE);
 
             SongsList.ItemsSource = _songs;
             DataContext = this;
@@ -128,7 +135,6 @@ namespace osu_Player
                 return;
             }
 
-            BassNet.Registration(__Private.MAIL, __Private.CODE);
             Bass.BASS_SetDevice(settings.AudioDevice);
             Bass.BASS_Init(settings.AudioDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
             _channel = Bass.BASS_StreamCreateFile(data[2], 0L, 0L, BASSFlag.BASS_DEFAULT);
@@ -137,6 +143,7 @@ namespace osu_Player
             ChangeVolume(null, null);
 
             if (_channel == 0) return;
+            if (_isNightcore) ToNightcore(null, null);
             Bass.BASS_ChannelPlay(_channel, false);
 
             PlayingStatus.IsEnabled = true;
@@ -232,6 +239,17 @@ namespace osu_Player
                 _channel, BASSAttribute.BASS_ATTRIB_VOL,
                 (float)(Volume.Value / Volume.Maximum)
             );
+        }
+
+        private void ToNightcore(object sender, RoutedEventArgs e)
+        {
+            _isNightcore = true;
+            Nightcore.Foreground = Brushes.White;
+            if (_channel == 0) return;
+            
+            Bass.BASS_ChannelGetAttribute(_channel, BASSAttribute.BASS_ATTRIB_FREQ, ref _pitch);
+            Bass.BASS_ChannelSetAttribute(_channel, BASSAttribute.BASS_ATTRIB_FREQ, _pitch * 1.5f);
+            Bass.BASS_ChannelSetAttribute(_channel, BASSAttribute.BASS_ATTRIB_TEMPO, 150);
         }
         
         private void TimerTick(object sender, EventArgs e)

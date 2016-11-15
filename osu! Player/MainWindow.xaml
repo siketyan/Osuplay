@@ -6,7 +6,6 @@
         mc:Ignorable="d" Style="{DynamicResource DefaultWindowStyle}"
         Title="osu! Player" MinHeight="131" Height="494" Width="330" Loaded="Init"
         Closing="ClearBass" Icon="Resources/icon.ico" StateChanged="ChangeMargin">
-    <!-- height: 494 -->
     <Window.Resources>
         <DataTemplate x:Key="SongsListTemplate">
             <DockPanel HorizontalAlignment="Stretch" Width="Auto" LastChildFill="True"
@@ -45,50 +44,70 @@
             </Grid.Background>
 
             <StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Height="24">
-                    <Button WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand"
-                            Margin="0,0,5,0" Click="OpenSettings">
-                        <Button.Template>
-                            <ControlTemplate>
-                                <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF"></Label>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                    <Button x:Name="Pin" WindowChrome.IsHitTestVisibleInChrome="True"
-                            Margin="0,0,3,0" Cursor="Hand" Click="ChangePin">
-                        <Button.Template>
-                            <ControlTemplate>
-                                <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF" RenderTransformOrigin="0.5,0.5">
-                                    <Label.RenderTransform>
-                                        <RotateTransform Angle="90" />
-                                    </Label.RenderTransform>
-                                    <TextBlock></TextBlock>
-                                </Label>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                    <Button x:Name="UnPin" WindowChrome.IsHitTestVisibleInChrome="True"
-                            Margin="0,0,3,0" Cursor="Hand" Click="ChangePin" Visibility="Collapsed">
-                        <Button.Template>
-                            <ControlTemplate>
-                                <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF"></Label>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                    <Button x:Name="WindowMode"  WindowChrome.IsHitTestVisibleInChrome="True"
-                            Margin="0,0,3,0" Cursor="Hand" Click="ChangeWindowMode" Content="">
-                        <Button.Template>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF"
-                                       FontSize="17" Padding="3,2" Content="{TemplateBinding Content}" />
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                    <Button Template="{StaticResource WindowControlButtonTemplate}" Click="MinimizeWindow"
-                            WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand">0</Button>
-                    <Button Template="{StaticResource WindowControlButtonTemplate}" Click="CloseWindow"
-                            WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand">r</Button>
-                </StackPanel>
+                <Grid Height="24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <Button x:Name="Nightcore"  WindowChrome.IsHitTestVisibleInChrome="True" Foreground="#222"
+                                Margin="5,0,0,0" Cursor="Hand" Click="ToNightcore" Content="">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Label FontFamily="Resources/#FontAwesome"
+                                           FontSize="16" Content="{TemplateBinding Content}"
+                                           Foreground="{TemplateBinding Foreground}" />
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                    
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand"
+                                Margin="0,0,5,0" Click="OpenSettings">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF"></Label>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button x:Name="Pin" WindowChrome.IsHitTestVisibleInChrome="True"
+                                Margin="0,0,3,0" Cursor="Hand" Click="ChangePin">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF" RenderTransformOrigin="0.5,0.5">
+                                        <Label.RenderTransform>
+                                            <RotateTransform Angle="90" />
+                                        </Label.RenderTransform>
+                                        <TextBlock></TextBlock>
+                                    </Label>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button x:Name="UnPin" WindowChrome.IsHitTestVisibleInChrome="True"
+                                Margin="0,0,3,0" Cursor="Hand" Click="ChangePin" Visibility="Collapsed">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF"></Label>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button x:Name="WindowMode"  WindowChrome.IsHitTestVisibleInChrome="True"
+                                Margin="0,0,3,0" Cursor="Hand" Click="ChangeWindowMode" Content="">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF"
+                                           FontSize="17" Padding="3,2" Content="{TemplateBinding Content}" />
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button Template="{StaticResource WindowControlButtonTemplate}" Click="MinimizeWindow"
+                                WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand">0</Button>
+                        <Button Template="{StaticResource WindowControlButtonTemplate}" Click="CloseWindow"
+                                WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand">r</Button>
+                    </StackPanel>
+                </Grid>
                 <Grid Margin="10,0,10,5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="37" />
