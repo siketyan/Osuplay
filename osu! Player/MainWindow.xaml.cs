@@ -243,6 +243,14 @@ namespace osu_Player
 
         private void ToNightcore(object sender, RoutedEventArgs e)
         {
+            if (_isNightcore && sender != null)
+            {
+                _isNightcore = false;
+                Nightcore.Foreground = new SolidColorBrush(Color.FromRgb(0x22, 0x22, 0x22));
+                Bass.BASS_ChannelSetAttribute(_channel, BASSAttribute.BASS_ATTRIB_FREQ, _pitch);
+                return;
+            }
+
             _isNightcore = true;
             Nightcore.Foreground = Brushes.White;
             if (_channel == 0) return;
@@ -446,6 +454,7 @@ namespace osu_Player
             {
                 MinHeight = 131;
                 Height = _windowHeight;
+                ResizeMode = ResizeMode.CanResize;
                 WindowMode.Content = "";
             }
             else // on Normal Mode
@@ -453,6 +462,7 @@ namespace osu_Player
                 _windowHeight = (int)ActualHeight;
                 MinHeight = 0;
                 Height = 72;
+                ResizeMode = ResizeMode.NoResize;
                 WindowMode.Content = "";
             }
         }
