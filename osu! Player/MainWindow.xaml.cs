@@ -14,6 +14,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Un4seen.Bass.AddOn.Fx;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 
 namespace osu_Player
 {
@@ -81,6 +82,7 @@ namespace osu_Player
             _songs = new DispatcherCollection<Song>();
             _timer = new DispatcherTimer(DispatcherPriority.Normal) { Interval = TimeSpan.FromMilliseconds(100) };
             _timer.Tick += TimerTick;
+            AppDomain.CurrentDomain.FirstChanceException += OnExceptionThrow;
 
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             BassNet.Registration(__Private.MAIL, __Private.CODE);
@@ -497,6 +499,38 @@ namespace osu_Player
                     break;
             }
             return IntPtr.Zero;
+        }
+
+        private void OnExceptionThrow(object sender, FirstChanceExceptionEventArgs e)
+        {
+            var msg = "予期しない例外が発生したため、osu! Playerを終了します。\n"
+                    + "以下のレポートを開発者に報告してください。\n"
+                    + "※OKボタンをクリックするとクリップボードにレポートをコピーして終了します。\n"
+                    + "※キャンセルボタンをクリックするとそのまま終了します。\n\n"
+                    + e.Exception.GetType().ToString() + "\n"
+                    + e.Exception.Message + "\n"
+                    + e.Exception.StackTrace + "\n"
+                    + e.Exception.Source;
+
+            if (e.Exception.InnerException != null)
+            {
+                msg += "\nInner: "
+                     + e.Exception.InnerException.GetType().ToString() + "\n"
+                     + e.Exception.InnerException.Message + "\n"
+                     + e.Exception.InnerException.StackTrace + "\n"
+                     + e.Exception.InnerException.Source;
+            }
+
+            var result = MessageBox.Show(
+                            msg, "Error - osu! Player",
+                            MessageBoxButton.OKCancel, MessageBoxImage.Error
+                         );
+            if (result == MessageBoxResult.OK)
+            {
+                Clipboard.SetDataObject(msg, true);
+            }
+
+            Environment.Exit(0);
         }
     }
 }
