@@ -68,6 +68,7 @@ namespace osu_Player
         private bool _isNightcore;
         private int _windowHeight;
         private int _channel;
+        private int _tempo;
         private float _pitch;
         private string _playing;
         private RepeatMode _repeat = RepeatMode.RepeatAll;
@@ -139,7 +140,8 @@ namespace osu_Player
 
             Bass.BASS_SetDevice(settings.AudioDevice);
             Bass.BASS_Init(settings.AudioDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
-            _channel = Bass.BASS_StreamCreateFile(data[2], 0L, 0L, BASSFlag.BASS_DEFAULT);
+            _channel = Bass.BASS_StreamCreateFile(data[2], 0L, 0L, BASSFlag.BASS_SAMPLE_FLOAT);
+            _tempo = BassFx.BASS_FX_TempoCreate(_channel, BASSFlag.BASS_FX_FREESOURCE);
             _playing = tag;
             _timer.Start();
             ChangeVolume(null, null);
