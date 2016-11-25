@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" Style="{DynamicResource DefaultWindowStyle}" MinWidth="160"
-        Title="osu! Player" MinHeight="131" Height="494" Width="330" Loaded="Init"
-        Closing="ClearBass" Icon="Resources/icon.ico" StateChanged="ChangeMargin">
+        Title="osu! Player" MinHeight="131" Height="494" Width="330" ShowInTaskbar="False"
+        AllowsTransparency="True" Opacity="0"  Loaded="Init" Closing="OnClosing" WindowStyle="None"
+        Icon="Resources/icon.ico" StateChanged="ChangeMargin" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <DataTemplate x:Key="SongsListTemplate">
             <DockPanel HorizontalAlignment="Stretch" Width="Auto" LastChildFill="True"
@@ -30,6 +31,13 @@
                 </StackPanel>
             </DockPanel>
         </DataTemplate>
+
+        <Storyboard x:Key="StartAnimation" Storyboard.TargetProperty="(Window.Opacity)">
+            <DoubleAnimation From="0" To="1" Duration="0:0:1"/>
+        </Storyboard>
+        <Storyboard x:Key="CloseAnimation" Storyboard.TargetProperty="(Window.Opacity)">
+            <DoubleAnimation From="1" To="0" Duration="0:0:1"/>
+        </Storyboard>
     </Window.Resources>
 
     <Grid x:Name="LayoutRoot">
@@ -51,8 +59,20 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <Button x:Name="DoubleTime"  WindowChrome.IsHitTestVisibleInChrome="True" Foreground="#222"
+                                Margin="6,0,0,0" Cursor="Hand" Click="ToDoubleTime" Content=""
+                                ToolTip="Mod DoubleTimeを再現します。">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Label FontFamily="Resources/#FontAwesome"
+                                           FontSize="16" Content="{TemplateBinding Content}"
+                                           Foreground="{TemplateBinding Foreground}" />
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
                         <Button x:Name="Nightcore"  WindowChrome.IsHitTestVisibleInChrome="True" Foreground="#222"
-                                Margin="5,0,0,0" Cursor="Hand" Click="ToNightcore" Content="">
+                                Margin="-6,0,0,0" Cursor="Hand" Click="ToNightcore" Content=""
+                                ToolTip="Mod Nightcoreを再現します。">
                             <Button.Template>
                                 <ControlTemplate TargetType="{x:Type Button}">
                                     <Label FontFamily="Resources/#FontAwesome"
@@ -65,7 +85,7 @@
                     
                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand"
-                                Margin="0,0,5,0" Click="OpenSettings">
+                                Margin="0,0,5,0" Click="OpenSettings" ToolTip="設定ウィンドウを表示します。">
                             <Button.Template>
                                 <ControlTemplate>
                                     <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF"></Label>
@@ -73,7 +93,8 @@
                             </Button.Template>
                         </Button>
                         <Button x:Name="Pin" WindowChrome.IsHitTestVisibleInChrome="True"
-                                Margin="0,0,3,0" Cursor="Hand" Click="ChangePin">
+                                Margin="0,0,3,0" Cursor="Hand" Click="ChangePin"
+                                ToolTip="ウィンドウを最前面に表示します。">
                             <Button.Template>
                                 <ControlTemplate>
                                     <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF" RenderTransformOrigin="0.5,0.5">
@@ -86,7 +107,8 @@
                             </Button.Template>
                         </Button>
                         <Button x:Name="UnPin" WindowChrome.IsHitTestVisibleInChrome="True"
-                                Margin="0,0,3,0" Cursor="Hand" Click="ChangePin" Visibility="Collapsed">
+                                Margin="0,0,3,0" Cursor="Hand" Click="ChangePin" Visibility="Collapsed"
+                                ToolTip="ウィンドウの最前面表示を解除します。">
                             <Button.Template>
                                 <ControlTemplate>
                                     <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF"></Label>
@@ -94,7 +116,8 @@
                             </Button.Template>
                         </Button>
                         <Button x:Name="WindowMode"  WindowChrome.IsHitTestVisibleInChrome="True"
-                                Margin="0,0,3,0" Cursor="Hand" Click="ChangeWindowMode" Content="">
+                                Margin="0,0,3,0" Cursor="Hand" Click="ChangeWindowMode" Content=""
+                                ToolTip="ミニマルインターフェースモードに切り替えます。">
                             <Button.Template>
                                 <ControlTemplate TargetType="{x:Type Button}">
                                     <Label FontFamily="Resources/#FontAwesome" Foreground="#FFF"
@@ -102,10 +125,12 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
-                        <Button Template="{StaticResource WindowControlButtonTemplate}" Click="MinimizeWindow"
-                                WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand">0</Button>
-                        <Button Template="{StaticResource WindowControlButtonTemplate}" Click="CloseWindow"
-                                WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand">r</Button>
+                        <Button Template="{StaticResource WindowControlButtonTemplate}"
+                                WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand"
+                                Click="MinimizeWindow" ToolTip="ウィンドウを最小化します。">0</Button>
+                        <Button Template="{StaticResource WindowControlButtonTemplate}"
+                                WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand"
+                                Click="CloseWindow" ToolTip="osu! Playerを終了します。">r</Button>
                     </StackPanel>
                 </Grid>
                 <Grid Margin="10,0,10,5">
@@ -127,20 +152,25 @@
                     <StackPanel x:Name="ControlButtons" Grid.Column="2" Margin="0,3,0,0">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                             <Label Style="{StaticResource ActionLabelStyle}" FontSize="14"  Foreground="#FFF"
-                                   Padding="0,0,0,2" Margin="0,0,5,0"  MouseLeftButtonDown="ShuffleSongs"></Label>
+                                   Padding="0,0,0,2" Margin="0,0,5,0"  MouseLeftButtonDown="ShuffleSongs"
+                                   ToolTip="曲リストをシャッフルします。現在曲を再生している場合は停止されます。"></Label>
                             <Label x:Name="NoRepeat" Style="{StaticResource ActionLabelStyle}" FontSize="13"
-                                   Padding="0,0,0,1" Tag="N"  MouseLeftButtonDown="ChangeRepeatMode"></Label>
+                                   Padding="0,0,0,1" Tag="N"  MouseLeftButtonDown="ChangeRepeatMode"
+                                   ToolTip="再生モードをリピートなしに変更します。"></Label>
                             <Label x:Name="RepeatSong" Style="{StaticResource ActionLabelStyle}"
-                                   Tag="S" MouseLeftButtonDown="ChangeRepeatMode"></Label>
+                                   Tag="S" MouseLeftButtonDown="ChangeRepeatMode"
+                                   ToolTip="再生モードを1曲リピートに変更します。"></Label>
                             <Label x:Name="RepeatAll" Style="{StaticResource ActionLabelStyle}" Margin="0,0,0,1.5"
-                                   Foreground="#FFF" Tag="A" MouseLeftButtonDown="ChangeRepeatMode"></Label>
+                                   Foreground="#FFF" Tag="A" MouseLeftButtonDown="ChangeRepeatMode"
+                                   ToolTip="再生モードを全曲リピートに変更します。"></Label>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Style="{StaticResource ActionLabelStyle}"
                                    Margin="0,0,2,0" Foreground="#FFF"></Label>
                             <Slider x:Name="Volume" Style="{StaticResource HorizontalSlider}" Foreground="#FFF"
                                     ValueChanged="ChangeVolume" Value="50" Maximum="100" Width="48"
-                                    WindowChrome.IsHitTestVisibleInChrome="True" />
+                                    WindowChrome.IsHitTestVisibleInChrome="True"
+                                    ToolTip="ドラッグして音量を調整します。"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>

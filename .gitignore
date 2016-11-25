@@ -7,3 +7,4 @@ obj/
 *.dll
 *.otf
 __*.cs
+*.user

@@ -1,0 +1,23 @@
+﻿<Window x:Class="osu_Player.SplashWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:osu_Player"
+        mc:Ignorable="d" AllowsTransparency="True" Background="Transparent"
+        Title="Loading - osu! Player" Height="256" Width="256" WindowStyle="None"
+        ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
+        Closing="OnClosing" Topmost="True" Opacity="0" Loaded="Init">
+    <Window.Resources>
+        <Storyboard x:Key="StartAnimation">
+            <DoubleAnimation Duration="0:0:1" To="1"
+                             Storyboard.TargetProperty="Opacity" />
+        </Storyboard>
+        <Storyboard x:Key="CloseAnimation" Completed="OnAnimationCompleted">
+            <DoubleAnimation Duration="0:0:0.5" To="0"
+                             Storyboard.TargetProperty="Opacity" />
+        </Storyboard>
+    </Window.Resources>
+    
+    <Image Source="Resources/logo.png" />
+</Window>

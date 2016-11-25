@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using Un4seen.Bass.AddOn.Fx;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using System.Windows.Media.Animation;
+using System.Threading;
 
 namespace osu_Player
 {
@@ -31,6 +33,8 @@ namespace osu_Player
             set
             {
                 PlayingStatus.Content = value ? "" : "";
+                PlayingStatus.ToolTip = value ? "曲の再生を再開します。"
+                                              : "曲の再生を一時停止します。";
                 _isPausing = value;
             }
         }
@@ -42,12 +46,14 @@ namespace osu_Player
                 {
                       PlayingStatus.IsEnabled
                     = ControlButtons.IsEnabled
+                    = SongsList.IsEnabled
                     = false;
                 }
                 else
                 {
                       PlayingStatus.IsEnabled
                     = ControlButtons.IsEnabled
+                    = SongsList.IsEnabled
                     = true;
                 }
             }
@@ -65,6 +71,7 @@ namespace osu_Player
 
         private bool _isPausing;
         private bool _isSizing;
+        private bool _isDoubleTime;
         private bool _isNightcore;
         private int _windowHeight;
         private int _channel;
@@ -122,7 +129,35 @@ namespace osu_Player
                     }
                 }
             }
-            await RefreshList();
+
+            if (settings.UseSplashScreen)
+            {
+                var splash = new SplashWindow();
+                splash.Show();
+
+                await Task.Run(() => Thread.Sleep(1000));
+                await RefreshList();
+
+                splash.Close();
+            }
+
+            if (settings.UseAnimation)
+            {
+                Storyboard sb = FindResource("StartAnimation") as Storyboard;
+                Storyboard.SetTarget(sb, this);
+                sb.Completed += (s, a) =>
+                {
+                    ShowInTaskbar = true;
+                };
+                sb.Begin();
+            }
+            else
+            {                
+                Opacity = 1f;
+                ShowInTaskbar = true;
+            }
+            
+            if (!settings.UseSplashScreen) await RefreshList();
         }
 
         private void PlaySong(string tag)
@@ -139,16 +174,19 @@ namespace osu_Player
 
             Bass.BASS_SetDevice(settings.AudioDevice);
             Bass.BASS_Init(settings.AudioDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
-            _channel = Bass.BASS_StreamCreateFile(data[2], 0L, 0L, BASSFlag.BASS_DEFAULT);
+            _channel = Bass.BASS_StreamCreateFile(data[2], 0L, 0L, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+            _channel = BassFx.BASS_FX_TempoCreate(_channel, BASSFlag.BASS_DEFAULT);
             _playing = tag;
             _timer.Start();
             ChangeVolume(null, null);
 
             if (_channel == 0) return;
+            if (_isDoubleTime) ToDoubleTime(null, null);
             if (_isNightcore) ToNightcore(null, null);
             Bass.BASS_ChannelPlay(_channel, false);
 
             PlayingStatus.IsEnabled = true;
+            PlayingStatus.ToolTip = "曲の再生を一時停止します。";
             PlayingStatus.Content = "";
             PlayingTitle.Text = data[0];
             PlayingArtist.Text = data[1];
@@ -194,6 +232,7 @@ namespace osu_Player
             _channel = 0;
 
             PlayingStatus.IsEnabled = false;
+            PlayingStatus.ToolTip = null;
             PlayingStatus.Content = "";
             PlayingTitle.Text = "曲を選択してください";
             PlayingArtist.Text = "クリックして再生します...";
@@ -243,8 +282,27 @@ namespace osu_Player
             );
         }
 
+        private void ToDoubleTime(object sender, RoutedEventArgs e)
+        {
+            if (_isNightcore) ToNightcore(this, null);
+            if (_isDoubleTime && sender != null)
+            {
+                _isDoubleTime = false;
+                DoubleTime.Foreground = new SolidColorBrush(Color.FromRgb(0x22, 0x22, 0x22));
+                Bass.BASS_ChannelSetAttribute(_channel, BASSAttribute.BASS_ATTRIB_TEMPO, 0f);
+                return;
+            }
+
+            _isDoubleTime = true;
+            DoubleTime.Foreground = Brushes.White;
+            if (_channel == 0) return;
+            
+            Bass.BASS_ChannelSetAttribute(_channel, BASSAttribute.BASS_ATTRIB_TEMPO, 50f);
+        }
+
         private void ToNightcore(object sender, RoutedEventArgs e)
         {
+            if (_isDoubleTime) ToDoubleTime(this, null);
             if (_isNightcore && sender != null)
             {
                 _isNightcore = false;
@@ -259,9 +317,8 @@ namespace osu_Player
             
             Bass.BASS_ChannelGetAttribute(_channel, BASSAttribute.BASS_ATTRIB_FREQ, ref _pitch);
             Bass.BASS_ChannelSetAttribute(_channel, BASSAttribute.BASS_ATTRIB_FREQ, _pitch * 1.5f);
-            Bass.BASS_ChannelSetAttribute(_channel, BASSAttribute.BASS_ATTRIB_TEMPO, 150);
         }
-        
+
         private void TimerTick(object sender, EventArgs e)
         {
             if (_channel != 0 && Bass.BASS_ChannelIsActive(_channel) == BASSActive.BASS_ACTIVE_PLAYING)
@@ -284,6 +341,7 @@ namespace osu_Player
                                     break;
                                 }
 
+                                PlayingStatus.ToolTip = null;
                                 PlayingStatus.Content = "";
                                 PlayingTitle.Text = "曲を選択してください";
                                 PlayingArtist.Text = "クリックして再生します...";
@@ -322,15 +380,28 @@ namespace osu_Player
             }
         }
 
-        private void ClearBass(object sender, CancelEventArgs e)
+        private void OnClosing(object sender, CancelEventArgs e)
         {
             StopSong();
+
+            var isAnimationCompleted = false;
+            if (!isAnimationCompleted && settings.UseAnimation)
+            {
+                e.Cancel = true;
+                Storyboard sb = FindResource("CloseAnimation") as Storyboard;
+                Storyboard.SetTarget(sb, this);
+                sb.Completed += (s, a) =>
+                {
+                    isAnimationCompleted = true;
+                    Environment.Exit(0);
+                };
+                sb.Begin();
+            }
         }
 
         private void CloseWindow(object sender, RoutedEventArgs e)
         {
-            StopSong();
-            Environment.Exit(0);
+            Close();
         }
 
         private void MinimizeWindow(object sender, RoutedEventArgs e)
@@ -379,6 +450,7 @@ namespace osu_Player
                     return 0;
                 }
 
+                PlayingStatus.ToolTip = null;
                 PlayingStatus.Content = "";
                 PlayingTitle.Text = "曲を検索しています";
                 PlayingArtist.Text = "しばらくお待ちください...";
@@ -458,6 +530,7 @@ namespace osu_Player
                 Height = _windowHeight;
                 ResizeMode = ResizeMode.CanResize;
                 WindowMode.Content = "";
+                WindowMode.ToolTip = "ミニマルインターフェースモードに切り替えます。";
             }
             else // on Normal Mode
             {
@@ -466,6 +539,7 @@ namespace osu_Player
                 Height = 72;
                 ResizeMode = ResizeMode.NoResize;
                 WindowMode.Content = "";
+                WindowMode.ToolTip = "通常モードに切り替えます。";
             }
         }
 

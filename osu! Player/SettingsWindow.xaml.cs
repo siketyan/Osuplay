@@ -32,6 +32,8 @@ namespace osu_Player
             
             OsuPath.Text = _currentOsuPath = _settings.OsuPath;
             AudioDevice.SelectedIndex = _currentAudioDevice = _settings.AudioDevice;
+            UseAnimation.IsChecked = _settings.UseAnimation;
+            UseSplashScreen.IsChecked = _settings.UseSplashScreen;
         }
 
         private void OpenFolderDialog(object sender, RoutedEventArgs e)
@@ -59,6 +61,8 @@ namespace osu_Player
         {
             _settings.OsuPath = OsuPath.Text;
             _settings.AudioDevice = AudioDevice.SelectedIndex;
+            _settings.UseAnimation = (bool)UseAnimation.IsChecked;
+            _settings.UseSplashScreen = (bool)UseSplashScreen.IsChecked;
             _instance.settings = _settings;
 
             SettingsManager.WriteSettings("settings.osp", _settings);
