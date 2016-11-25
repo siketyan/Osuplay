@@ -134,10 +134,15 @@ namespace osu_Player
             {
                 var splash = new SplashWindow();
                 splash.Show();
+
                 await Task.Run(() => Thread.Sleep(1000));
                 await RefreshList();
-                splash.Close();
 
+                splash.Close();
+            }
+
+            if (settings.UseAnimation)
+            {
                 Storyboard sb = FindResource("StartAnimation") as Storyboard;
                 Storyboard.SetTarget(sb, this);
                 sb.Completed += (s, a) =>
@@ -149,8 +154,10 @@ namespace osu_Player
             else
             {                
                 Opacity = 1f;
-                await RefreshList();
+                ShowInTaskbar = true;
             }
+            
+            if (!settings.UseSplashScreen) await RefreshList();
         }
 
         private void PlaySong(string tag)
@@ -378,7 +385,7 @@ namespace osu_Player
             StopSong();
 
             var isAnimationCompleted = false;
-            if (!isAnimationCompleted)
+            if (!isAnimationCompleted && settings.UseAnimation)
             {
                 e.Cancel = true;
                 Storyboard sb = FindResource("CloseAnimation") as Storyboard;

@@ -7,18 +7,12 @@
         mc:Ignorable="d" AllowsTransparency="True" Background="Transparent"
         Title="Loading - osu! Player" Height="256" Width="256" WindowStyle="None"
         ShowInTaskbar="False" WindowStartupLocation="CenterScreen"
-        Closing="OnClosing" Topmost="True" Opacity="0">
-    <Window.Triggers>
-        <EventTrigger RoutedEvent="Window.Loaded">
-            <BeginStoryboard>
-                <Storyboard>
-                    <DoubleAnimation Duration="0:0:1" To="1"
-                                     Storyboard.TargetProperty="Opacity" />
-                </Storyboard>
-            </BeginStoryboard>
-        </EventTrigger>
-    </Window.Triggers>
+        Closing="OnClosing" Topmost="True" Opacity="0" Loaded="Init">
     <Window.Resources>
+        <Storyboard x:Key="StartAnimation">
+            <DoubleAnimation Duration="0:0:1" To="1"
+                             Storyboard.TargetProperty="Opacity" />
+        </Storyboard>
         <Storyboard x:Key="CloseAnimation" Completed="OnAnimationCompleted">
             <DoubleAnimation Duration="0:0:0.5" To="0"
                              Storyboard.TargetProperty="Opacity" />
