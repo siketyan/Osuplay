@@ -31,6 +31,8 @@ namespace osu_Player
             set
             {
                 PlayingStatus.Content = value ? "" : "";
+                PlayingStatus.ToolTip = value ? "曲の再生を再開します。"
+                                              : "曲の再生を一時停止します。";
                 _isPausing = value;
             }
         }
@@ -42,12 +44,14 @@ namespace osu_Player
                 {
                       PlayingStatus.IsEnabled
                     = ControlButtons.IsEnabled
+                    = SongsList.IsEnabled
                     = false;
                 }
                 else
                 {
                       PlayingStatus.IsEnabled
                     = ControlButtons.IsEnabled
+                    = SongsList.IsEnabled
                     = true;
                 }
             }
@@ -152,6 +156,7 @@ namespace osu_Player
             Bass.BASS_ChannelPlay(_channel, false);
 
             PlayingStatus.IsEnabled = true;
+            PlayingStatus.ToolTip = "曲の再生を一時停止します。";
             PlayingStatus.Content = "";
             PlayingTitle.Text = data[0];
             PlayingArtist.Text = data[1];
@@ -197,6 +202,7 @@ namespace osu_Player
             _channel = 0;
 
             PlayingStatus.IsEnabled = false;
+            PlayingStatus.ToolTip = null;
             PlayingStatus.Content = "";
             PlayingTitle.Text = "曲を選択してください";
             PlayingArtist.Text = "クリックして再生します...";
@@ -305,6 +311,7 @@ namespace osu_Player
                                     break;
                                 }
 
+                                PlayingStatus.ToolTip = null;
                                 PlayingStatus.Content = "";
                                 PlayingTitle.Text = "曲を選択してください";
                                 PlayingArtist.Text = "クリックして再生します...";
@@ -400,6 +407,7 @@ namespace osu_Player
                     return 0;
                 }
 
+                PlayingStatus.ToolTip = null;
                 PlayingStatus.Content = "";
                 PlayingTitle.Text = "曲を検索しています";
                 PlayingArtist.Text = "しばらくお待ちください...";
@@ -479,6 +487,7 @@ namespace osu_Player
                 Height = _windowHeight;
                 ResizeMode = ResizeMode.CanResize;
                 WindowMode.Content = "";
+                WindowMode.ToolTip = "ミニマルインターフェースモードに切り替えます。";
             }
             else // on Normal Mode
             {
@@ -487,6 +496,7 @@ namespace osu_Player
                 Height = 72;
                 ResizeMode = ResizeMode.NoResize;
                 WindowMode.Content = "";
+                WindowMode.ToolTip = "通常モードに切り替えます。";
             }
         }
 
