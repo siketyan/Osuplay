@@ -65,10 +65,10 @@ namespace osu_Player
 
         private bool _isPausing;
         private bool _isSizing;
+        private bool _isDoubleTime;
         private bool _isNightcore;
         private int _windowHeight;
         private int _channel;
-        private int _fxChannel;
         private float _pitch;
         private string _playing;
         private RepeatMode _repeat = RepeatMode.RepeatAll;
@@ -140,13 +140,14 @@ namespace osu_Player
 
             Bass.BASS_SetDevice(settings.AudioDevice);
             Bass.BASS_Init(settings.AudioDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
-            _channel = Bass.BASS_StreamCreateFile(data[2], 0L, 0L, BASSFlag.BASS_SAMPLE_FLOAT);
-            _fxChannel = BassFx.BASS_FX_TempoCreate(_channel, BASSFlag.BASS_FX_FREESOURCE);
+            _channel = Bass.BASS_StreamCreateFile(data[2], 0L, 0L, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+            _channel = BassFx.BASS_FX_TempoCreate(_channel, BASSFlag.BASS_DEFAULT);
             _playing = tag;
             _timer.Start();
             ChangeVolume(null, null);
 
             if (_channel == 0) return;
+            if (_isDoubleTime) ToDoubleTime(null, null);
             if (_isNightcore) ToNightcore(null, null);
             Bass.BASS_ChannelPlay(_channel, false);
 
@@ -245,8 +246,27 @@ namespace osu_Player
             );
         }
 
+        private void ToDoubleTime(object sender, RoutedEventArgs e)
+        {
+            if (_isNightcore) ToNightcore(this, null);
+            if (_isDoubleTime && sender != null)
+            {
+                _isDoubleTime = false;
+                DoubleTime.Foreground = new SolidColorBrush(Color.FromRgb(0x22, 0x22, 0x22));
+                Bass.BASS_ChannelSetAttribute(_channel, BASSAttribute.BASS_ATTRIB_TEMPO, 0f);
+                return;
+            }
+
+            _isDoubleTime = true;
+            DoubleTime.Foreground = Brushes.White;
+            if (_channel == 0) return;
+            
+            Bass.BASS_ChannelSetAttribute(_channel, BASSAttribute.BASS_ATTRIB_TEMPO, 50f);
+        }
+
         private void ToNightcore(object sender, RoutedEventArgs e)
         {
+            if (_isDoubleTime) ToDoubleTime(this, null);
             if (_isNightcore && sender != null)
             {
                 _isNightcore = false;
@@ -261,9 +281,8 @@ namespace osu_Player
             
             Bass.BASS_ChannelGetAttribute(_channel, BASSAttribute.BASS_ATTRIB_FREQ, ref _pitch);
             Bass.BASS_ChannelSetAttribute(_channel, BASSAttribute.BASS_ATTRIB_FREQ, _pitch * 1.5f);
-            Bass.BASS_ChannelSetAttribute(_channel, BASSAttribute.BASS_ATTRIB_TEMPO, 150);
         }
-        
+
         private void TimerTick(object sender, EventArgs e)
         {
             if (_channel != 0 && Bass.BASS_ChannelIsActive(_channel) == BASSActive.BASS_ACTIVE_PLAYING)

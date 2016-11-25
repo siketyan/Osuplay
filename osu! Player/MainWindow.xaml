@@ -51,8 +51,18 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <Button x:Name="DoubleTime"  WindowChrome.IsHitTestVisibleInChrome="True" Foreground="#222"
+                                Margin="6,0,0,0" Cursor="Hand" Click="ToDoubleTime" Content="">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Label FontFamily="Resources/#FontAwesome"
+                                           FontSize="16" Content="{TemplateBinding Content}"
+                                           Foreground="{TemplateBinding Foreground}" />
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
                         <Button x:Name="Nightcore"  WindowChrome.IsHitTestVisibleInChrome="True" Foreground="#222"
-                                Margin="5,0,0,0" Cursor="Hand" Click="ToNightcore" Content="">
+                                Margin="-6,0,0,0" Cursor="Hand" Click="ToNightcore" Content="">
                             <Button.Template>
                                 <ControlTemplate TargetType="{x:Type Button}">
                                     <Label FontFamily="Resources/#FontAwesome"
