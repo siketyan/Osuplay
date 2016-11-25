@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" Style="{DynamicResource DefaultWindowStyle}" MinWidth="160"
-        Title="osu! Player" MinHeight="131" Height="494" Width="330" Loaded="Init"
-        Closing="ClearBass" Icon="Resources/icon.ico" StateChanged="ChangeMargin">
+        Title="osu! Player" MinHeight="131" Height="494" Width="330" ShowInTaskbar="False"
+        AllowsTransparency="True" Opacity="0"  Loaded="Init" Closing="OnClosing" WindowStyle="None"
+        Icon="Resources/icon.ico" StateChanged="ChangeMargin" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <DataTemplate x:Key="SongsListTemplate">
             <DockPanel HorizontalAlignment="Stretch" Width="Auto" LastChildFill="True"
@@ -30,6 +31,13 @@
                 </StackPanel>
             </DockPanel>
         </DataTemplate>
+
+        <Storyboard x:Key="StartAnimation" Storyboard.TargetProperty="(Window.Opacity)">
+            <DoubleAnimation From="0" To="1" Duration="0:0:1"/>
+        </Storyboard>
+        <Storyboard x:Key="CloseAnimation" Storyboard.TargetProperty="(Window.Opacity)">
+            <DoubleAnimation From="1" To="0" Duration="0:0:1"/>
+        </Storyboard>
     </Window.Resources>
 
     <Grid x:Name="LayoutRoot">

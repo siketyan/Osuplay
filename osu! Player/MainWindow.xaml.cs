@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using Un4seen.Bass.AddOn.Fx;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using System.Windows.Media.Animation;
+using System.Threading;
 
 namespace osu_Player
 {
@@ -127,7 +129,28 @@ namespace osu_Player
                     }
                 }
             }
-            await RefreshList();
+
+            if (settings.UseSplashScreen)
+            {
+                var splash = new SplashWindow();
+                splash.Show();
+                await Task.Run(() => Thread.Sleep(1000));
+                await RefreshList();
+                splash.Close();
+
+                Storyboard sb = FindResource("StartAnimation") as Storyboard;
+                Storyboard.SetTarget(sb, this);
+                sb.Completed += (s, a) =>
+                {
+                    ShowInTaskbar = true;
+                };
+                sb.Begin();
+            }
+            else
+            {                
+                Opacity = 1f;
+                await RefreshList();
+            }
         }
 
         private void PlaySong(string tag)
@@ -350,15 +373,28 @@ namespace osu_Player
             }
         }
 
-        private void ClearBass(object sender, CancelEventArgs e)
+        private void OnClosing(object sender, CancelEventArgs e)
         {
             StopSong();
+
+            var isAnimationCompleted = false;
+            if (!isAnimationCompleted)
+            {
+                e.Cancel = true;
+                Storyboard sb = FindResource("CloseAnimation") as Storyboard;
+                Storyboard.SetTarget(sb, this);
+                sb.Completed += (s, a) =>
+                {
+                    isAnimationCompleted = true;
+                    Environment.Exit(0);
+                };
+                sb.Begin();
+            }
         }
 
         private void CloseWindow(object sender, RoutedEventArgs e)
         {
-            StopSong();
-            Environment.Exit(0);
+            Close();
         }
 
         private void MinimizeWindow(object sender, RoutedEventArgs e)

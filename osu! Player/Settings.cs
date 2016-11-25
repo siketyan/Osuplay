@@ -8,8 +8,10 @@ namespace osu_Player
     [Serializable]
     public class Settings
     {
+        // 設定項目を追加する場合は、bool型→string型→数値型→リスト→それ以外で、配列は使用しない。
+        public bool UseSplashScreen { get; set; } = true;
         public string OsuPath { get; set; }
-        public int AudioDevice { get; set; }
+        public int AudioDevice { get; set; } = 0;
         public List<string> DisabledSongs { get; set; }
     }
 
