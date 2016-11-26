@@ -577,6 +577,9 @@ namespace osu_Player
 
         private void OnExceptionThrow(object sender, FirstChanceExceptionEventArgs e)
         {
+            if (e.Exception.Source == "PresentationCore"
+             || e.Exception.InnerException.Source == "PresentationCore") return;
+
             var msg = "予期しない例外が発生したため、osu! Playerを終了します。\n"
                     + "以下のレポートを開発者に報告してください。\n"
                     + "※OKボタンをクリックするとクリップボードにレポートをコピーして終了します。\n"
