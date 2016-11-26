@@ -98,7 +98,7 @@ namespace osu_Player
             DataContext = this;
         }
 
-        private async void Init(object sender, RoutedEventArgs e)
+        private async void InitAsync(object sender, RoutedEventArgs e)
         {
             var hsrc = PresentationSource.FromVisual(this) as HwndSource;
             hsrc.AddHook(WndProc);
@@ -136,13 +136,16 @@ namespace osu_Player
                 splash.Show();
 
                 await Task.Run(() => Thread.Sleep(1000));
-                await RefreshList();
+                await RefreshListAsync();
 
                 splash.Close();
             }
 
             if (settings.UseAnimation)
             {
+                await Task.Run(() => Thread.Sleep(1000));
+                Activate();
+
                 Storyboard sb = FindResource("StartAnimation") as Storyboard;
                 Storyboard.SetTarget(sb, this);
                 sb.Completed += (s, a) =>
@@ -152,12 +155,14 @@ namespace osu_Player
                 sb.Begin();
             }
             else
-            {                
+            {
+                Activate();
+
                 Opacity = 1f;
                 ShowInTaskbar = true;
             }
             
-            if (!settings.UseSplashScreen) await RefreshList();
+            if (!settings.UseSplashScreen) await RefreshListAsync();
         }
 
         private void PlaySong(string tag)
@@ -269,9 +274,9 @@ namespace osu_Player
             }
         }
 
-        private async void ShuffleSongs(object sender, MouseButtonEventArgs e)
+        private async void ShuffleSongsAsync(object sender, MouseButtonEventArgs e)
         {
-            await RefreshList(true);
+            await RefreshListAsync(true);
         }
 
         private void ChangeVolume(object sender, RoutedEventArgs e)
@@ -436,7 +441,7 @@ namespace osu_Player
             }
         }
 
-        public async Task<int> RefreshList(bool doShuffle = false)
+        public async Task<int> RefreshListAsync(bool doShuffle = false)
         {
             try
             {
@@ -577,6 +582,9 @@ namespace osu_Player
 
         private void OnExceptionThrow(object sender, FirstChanceExceptionEventArgs e)
         {
+            if (e.Exception.Source == "PresentationCore"
+             || e.Exception.InnerException.Source == "PresentationCore") return;
+
             var msg = "予期しない例外が発生したため、osu! Playerを終了します。\n"
                     + "以下のレポートを開発者に報告してください。\n"
                     + "※OKボタンをクリックするとクリップボードにレポートをコピーして終了します。\n"

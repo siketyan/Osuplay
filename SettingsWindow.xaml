@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" Style="{StaticResource ToolWindowStyle}"
         Title="Settings - osu! Player" Height="247" Width="360" WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize" FontFamily="Yu Gothic UI, Meiryo UI">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="26" />
@@ -16,7 +16,7 @@
             <DockPanel Margin="5,2" LastChildFill="False">
                 <Label FontFamily="Resources/#FontAwesome" Foreground="White"></Label>
                 <Label Foreground="White" Padding="3,3,0,0">Settings - osu! Player</Label>
-                <Button Template="{StaticResource WindowControlButtonTemplate}" Click="CloseWindow"
+                <Button Template="{StaticResource WindowControlButtonTemplate}" Click="CloseWindowAsync"
                         WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand" DockPanel.Dock="Right">r</Button>
             </DockPanel>
         </Grid>
@@ -32,8 +32,8 @@
             <Label Margin="0,10,0,0">使用するオーディオデバイス</Label>
             <ComboBox x:Name="AudioDevice" />
 
-            <CheckBox x:Name="UseAnimation" Margin="0,15,0,4">ウィンドウの開閉にアニメーションを使う</CheckBox>
-            <CheckBox x:Name="UseSplashScreen">曲の読み込み中にスプラッシュスクリーンを表示する</CheckBox>
+            <CheckBox x:Name="UseAnimation" Margin="0,15,0,4">起動及び終了時にアニメーションを使う</CheckBox>
+            <CheckBox x:Name="UseSplashScreen">起動時にスプラッシュスクリーンを表示して曲の読み込みを行う</CheckBox>
 
             <Button Margin="0,15,0,0" Height="25" Background="Transparent"
                     BorderBrush="#CCC" Click="OpenDisabledSongs">非表示している曲の管理</Button>

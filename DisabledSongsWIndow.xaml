@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:osu_Player"
         mc:Ignorable="d" Style="{StaticResource ToolWindowStyle}"
         Title="Disabled Songs - osu! Player" Height="470" Width="330" WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize" Loaded="Init">
+        ResizeMode="NoResize" Loaded="Init" FontFamily="Yu Gothic UI, Meiryo UI">
     <Window.Resources>
         <DataTemplate x:Key="SongsListTemplate">
             <DockPanel HorizontalAlignment="Stretch" Width="Auto" LastChildFill="True" Margin="5,2">
