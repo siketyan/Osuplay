@@ -16,7 +16,7 @@
             <DockPanel Margin="5,2" LastChildFill="False">
                 <Label FontFamily="Resources/#FontAwesome" Foreground="White"></Label>
                 <Label Foreground="White" Padding="3,3,0,0">Settings - osu! Player</Label>
-                <Button Template="{StaticResource WindowControlButtonTemplate}" Click="CloseWindow"
+                <Button Template="{StaticResource WindowControlButtonTemplate}" Click="CloseWindowAsync"
                         WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand" DockPanel.Dock="Right">r</Button>
             </DockPanel>
         </Grid>

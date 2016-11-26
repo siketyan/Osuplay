@@ -98,7 +98,7 @@ namespace osu_Player
             DataContext = this;
         }
 
-        private async void Init(object sender, RoutedEventArgs e)
+        private async void InitAsync(object sender, RoutedEventArgs e)
         {
             var hsrc = PresentationSource.FromVisual(this) as HwndSource;
             hsrc.AddHook(WndProc);
@@ -136,7 +136,7 @@ namespace osu_Player
                 splash.Show();
 
                 await Task.Run(() => Thread.Sleep(1000));
-                await RefreshList();
+                await RefreshListAsync();
 
                 splash.Close();
             }
@@ -157,7 +157,7 @@ namespace osu_Player
                 ShowInTaskbar = true;
             }
             
-            if (!settings.UseSplashScreen) await RefreshList();
+            if (!settings.UseSplashScreen) await RefreshListAsync();
         }
 
         private void PlaySong(string tag)
@@ -269,9 +269,9 @@ namespace osu_Player
             }
         }
 
-        private async void ShuffleSongs(object sender, MouseButtonEventArgs e)
+        private async void ShuffleSongsAsync(object sender, MouseButtonEventArgs e)
         {
-            await RefreshList(true);
+            await RefreshListAsync(true);
         }
 
         private void ChangeVolume(object sender, RoutedEventArgs e)
@@ -436,7 +436,7 @@ namespace osu_Player
             }
         }
 
-        public async Task<int> RefreshList(bool doShuffle = false)
+        public async Task<int> RefreshListAsync(bool doShuffle = false)
         {
             try
             {

@@ -51,13 +51,16 @@ namespace osu_Player
 
         private void OpenDisabledSongs(object sender, RoutedEventArgs e)
         {
-            var window = new DisabledSongsWIndow();
-            window.Owner = this;
+            var window = new DisabledSongsWIndow()
+            {
+                Owner = this
+            };
+
             window.ShowDialog();
             _isDisabledSongsModified = window.IsModified;
         }
 
-        private async void CloseWindow(object sender, RoutedEventArgs e)
+        private async void CloseWindowAsync(object sender, RoutedEventArgs e)
         {
             _settings.OsuPath = OsuPath.Text;
             _settings.AudioDevice = AudioDevice.SelectedIndex;
@@ -71,7 +74,7 @@ namespace osu_Player
 
             if (_currentOsuPath == OsuPath.Text && !_isDisabledSongsModified) return;
 
-            await MainWindow.GetInstance().RefreshList();
+            await MainWindow.GetInstance().RefreshListAsync();
         }
     }
 }
