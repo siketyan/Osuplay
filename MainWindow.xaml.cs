@@ -143,6 +143,9 @@ namespace osu_Player
 
             if (settings.UseAnimation)
             {
+                await Task.Run(() => Thread.Sleep(1000));
+                Activate();
+
                 Storyboard sb = FindResource("StartAnimation") as Storyboard;
                 Storyboard.SetTarget(sb, this);
                 sb.Completed += (s, a) =>
@@ -152,7 +155,9 @@ namespace osu_Player
                 sb.Begin();
             }
             else
-            {                
+            {
+                Activate();
+
                 Opacity = 1f;
                 ShowInTaskbar = true;
             }
