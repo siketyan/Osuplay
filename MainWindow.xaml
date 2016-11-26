@@ -6,7 +6,8 @@
         mc:Ignorable="d" Style="{DynamicResource DefaultWindowStyle}" MinWidth="160"
         Title="osu! Player" MinHeight="131" Height="494" Width="330" ShowInTaskbar="False"
         AllowsTransparency="True" Opacity="0"  Loaded="Init" Closing="OnClosing" WindowStyle="None"
-        Icon="Resources/icon.ico" StateChanged="ChangeMargin" WindowStartupLocation="CenterScreen">
+        Icon="Resources/icon.ico" StateChanged="ChangeMargin" WindowStartupLocation="CenterScreen"
+        FontFamily="Yu Gothic UI, Meiryo UI">
     <Window.Resources>
         <DataTemplate x:Key="SongsListTemplate">
             <DockPanel HorizontalAlignment="Stretch" Width="Auto" LastChildFill="True"

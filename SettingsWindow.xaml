@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" Style="{StaticResource ToolWindowStyle}"
         Title="Settings - osu! Player" Height="247" Width="360" WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize" FontFamily="Yu Gothic UI, Meiryo UI">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="26" />
