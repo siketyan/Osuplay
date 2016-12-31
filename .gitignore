@@ -2,6 +2,7 @@
 .vs/
 bin/
 obj/
+packages/
 
 # Files
 *.dll
