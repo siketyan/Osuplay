@@ -10,7 +10,7 @@ namespace osu_Player
     /// <summary>
     /// DisabledSongsWIndow.xaml の相互作用ロジック
     /// </summary>
-    public partial class DisabledSongsWIndow : Window
+    public partial class DisabledSongsWindow : Window
     {
         public bool IsModified { get; private set; }
 
@@ -18,7 +18,7 @@ namespace osu_Player
         private MainWindow _instance;
         private Settings _settings;
 
-        public DisabledSongsWIndow()
+        public DisabledSongsWindow()
         {
             InitializeComponent();
 

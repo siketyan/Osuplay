@@ -45,7 +45,7 @@
   <ItemGroup>
     <Reference Include="Bass.Net, Version=2.4.12.3, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Libraries\Bass24.Net\v4.5\Bass.Net.dll</HintPath>
+      <HintPath>..\..\Libraries\Bass24.Net\v4.5\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -68,8 +68,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DisabledSongsWIndow.xaml.cs">
-      <DependentUpon>DisabledSongsWIndow.xaml</DependentUpon>
+    <Compile Include="DisabledSongsWindow.xaml.cs">
+      <DependentUpon>DisabledSongsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="FolderBrowserDialog.cs" />
     <Compile Include="DispatcherCollection.cs" />
@@ -84,7 +84,7 @@
     </Compile>
     <Compile Include="WindowManager.cs" />
     <Compile Include="__Private.cs" />
-    <Page Include="DisabledSongsWIndow.xaml">
+    <Page Include="DisabledSongsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
