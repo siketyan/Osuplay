@@ -51,7 +51,7 @@ namespace osu_Player
 
         private void OpenDisabledSongs(object sender, RoutedEventArgs e)
         {
-            var window = new DisabledSongsWIndow()
+            var window = new DisabledSongsWindow()
             {
                 Owner = this
             };
