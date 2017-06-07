@@ -22,6 +22,12 @@ namespace osu_Player
                 return;
             }
 
+            var id = (long)-1;
+            if (Regex.IsMatch(folder.Name, @"^[0-9]+"))
+            {
+                id = long.Parse(new Regex(@"^[0-9]+").Match(folder.Name).Groups[0].ToString());
+            }
+
             var stream = new StreamReader(osuFile[0].FullName);
             while (!stream.EndOfStream)
             {
@@ -51,17 +57,10 @@ namespace osu_Player
                 {
                     AudioPath = folder.FullName + @"\" + new Regex(@"^AudioFilename:\s?(.+)$").Match(line).Groups[1];
                 }
-
-                //MessageBox.Show(@"^\d,\d,(\d,)?"".+"",\d,\d$");
-                if (ThumbnailPath == null && line != null &&
-                    Regex.IsMatch(line, @"^\d,\d,(\d,)?""(.+\.(jpg|png))""(,\d,\d)?$", RegexOptions.IgnoreCase))
-                {
-                    ThumbnailPath =
-                        folder.FullName + @"\" + new Regex(@"^\d,\d,(\d,)?""(.+)""(,\d,\d)?$").Match(line).Groups[2];
-                }
             }
-
-            if (ThumbnailPath == null || !File.Exists(ThumbnailPath))
+            
+            ThumbnailPath = folder.FullName + @"\..\..\Data\bt\" + id + ".jpg";
+            if (!File.Exists(ThumbnailPath))
             {
                 ThumbnailPath = "Resources/unknown.png";
             }
