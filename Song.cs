@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace osu_Player
@@ -32,31 +33,19 @@ namespace osu_Player
             while (!stream.EndOfStream)
             {
                 var line = stream.ReadLine();
+                if (line == null) continue;
 
-                if (line != null && Regex.IsMatch(line, @"^Title:.+$"))
+                var properties = new Dictionary<string, string>();
+
+                if (line.Contains(":"))
                 {
-                    Title = new Regex(@"^Title:(.+)$").Match(line).Groups[1].ToString();
+                    var splitted = line.Split(':');
+                    properties.Add(splitted[0], splitted[1]);
                 }
 
-                if (line != null && Regex.IsMatch(line, @"^TitleUnicode:.+$"))
-                {
-                    Title = new Regex(@"^TitleUnicode:(.+)$").Match(line).Groups[1].ToString();
-                }
-
-                if (line != null && Regex.IsMatch(line, @"^Artist:.+$"))
-                {
-                    Artist = new Regex(@"^Artist:(.+)$").Match(line).Groups[1].ToString();
-                }
-
-                if (line != null && Regex.IsMatch(line, @"^ArtistUnicode:.+$"))
-                {
-                    Artist = new Regex(@"^ArtistUnicode:(.+)$").Match(line).Groups[1].ToString();
-                }
-
-                if (line != null && Regex.IsMatch(line, @"^AudioFilename:\s?.+$"))
-                {
-                    AudioPath = folder.FullName + @"\" + new Regex(@"^AudioFilename:\s?(.+)$").Match(line).Groups[1];
-                }
+                Title = properties.ContainsKey("TitleUnicode") ? properties["TitleUnicode"] : properties["Title"];
+                Artist = properties.ContainsKey("ArtistUnicode") ? properties["ArtistUnicode"] : properties["Artist"];
+                AudioPath = folder.FullName + @"\" + properties["AudioFilename"];
             }
             
             ThumbnailPath = folder.FullName + @"\..\..\Data\bt\" + id + ".jpg";
