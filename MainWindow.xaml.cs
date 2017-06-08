@@ -445,9 +445,6 @@ namespace osu_Player
         {
             try
             {
-                IsSearching = true;
-                StopSong();
-
                 if (!Directory.Exists(settings.OsuPath + @"\Songs"))
                 {
                     MessageBox.Show("正しい osu! フォルダの場所を指定してください。", "osu! Player");
@@ -455,6 +452,9 @@ namespace osu_Player
                     return;
                 }
 
+                IsSearching = true;
+                StopSong();
+                
                 PlayingStatus.ToolTip = null;
                 PlayingStatus.Content = "";
                 PlayingTitle.Text = "曲を検索しています";
