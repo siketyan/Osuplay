@@ -40,7 +40,7 @@ namespace osu_Player
                 if (line.Contains(":"))
                 {
                     var splitted = line.Split(':');
-                    properties.Add(splitted[0], splitted[1]);
+                    properties.Add(splitted[0], splitted[1].Trim(' '));
                 }
             }
 
