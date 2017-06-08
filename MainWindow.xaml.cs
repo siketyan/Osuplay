@@ -441,7 +441,7 @@ namespace osu_Player
             }
         }
 
-        public async Task<int> RefreshListAsync(bool doShuffle = false)
+        public async Task RefreshListAsync(bool doShuffle = false)
         {
             try
             {
@@ -452,7 +452,7 @@ namespace osu_Player
                 {
                     MessageBox.Show("正しい osu! フォルダの場所を指定してください。", "osu! Player");
                     OpenSettings(null, null);
-                    return 0;
+                    return;
                 }
 
                 PlayingStatus.ToolTip = null;
@@ -493,8 +493,6 @@ namespace osu_Player
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace, ex.GetType().ToString());
             }
-
-            return 0;
         }
 
         private void ChangeMargin(object sender, EventArgs e)
