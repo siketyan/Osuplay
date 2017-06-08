@@ -44,12 +44,6 @@ namespace osu_Player
                 }
             }
 
-            var hoge = "";
-            foreach (var property in properties)
-            {
-                hoge += property.Key + "::" + property.Value + "\n";
-            }
-
             Title = properties.ContainsKey("TitleUnicode") ? properties["TitleUnicode"] : properties["Title"];
             Artist = properties.ContainsKey("ArtistUnicode") ? properties["ArtistUnicode"] : properties["Artist"];
             AudioPath = folder.FullName + @"\" + properties["AudioFilename"];
