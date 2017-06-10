@@ -70,7 +70,7 @@ namespace osu_Player
                 IsModified = true;
                 
                 _settings.DisabledSongs.Remove(song);
-                SettingsManager.WriteSettings("settings.osp", _settings);
+                _settings.Write();
 
                 _songs.Remove(song);
             }

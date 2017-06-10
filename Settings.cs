@@ -1,42 +1,49 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Windows;
 
 namespace osu_Player
 {
-    [Serializable]
     public class Settings
     {
-        // 設定項目を追加する場合は、bool型→string型→数値型→リスト→それ以外で、配列は使用しない。
+        private const string PATH = "settings.json";
+
+        [JsonProperty("use_splash")]
         public bool UseSplashScreen { get; set; } = true;
+
+        [JsonProperty("use_animation")]
         public bool UseAnimation { get; set; } = true;
+
+        [JsonProperty("osu_path")]
         public string OsuPath { get; set; }
+
+        [JsonProperty("audio_device")]
         public int AudioDevice { get; set; } = 0;
+
+        [JsonProperty("disabled_songs")]
         public List<Song> DisabledSongs { get; set; }
-    }
 
-    public static class SettingsManager
-    {
-        public static Settings ReadSettings(string path)
+        public static Settings Read()
         {
-            FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            BinaryFormatter formatter = new BinaryFormatter();
+            string json;
+            using (var stream = new FileStream(PATH, FileMode.Open, FileAccess.Read))
+            using (var reader = new StreamReader(stream))
+            {
+                json = reader.ReadToEnd();
+            }
 
-            var settings = (Settings)formatter.Deserialize(stream);
-            stream.Close();
-
-            return settings;
+            return JsonConvert.DeserializeObject<Settings>(json);
         }
 
-        public static void WriteSettings(string path, Settings settings)
+        public void Write()
         {
-            FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write);
-            BinaryFormatter formatter = new BinaryFormatter();
-
-            formatter.Serialize(stream, settings);
-            stream.Close();
+            var json = JsonConvert.SerializeObject(this);
+            using (var stream = new FileStream(PATH, FileMode.OpenOrCreate, FileAccess.Write))
+            using (var writer = new StreamWriter(stream))
+            {
+                writer.Write(json);
+                writer.Flush();
+            }
         }
     }
 }

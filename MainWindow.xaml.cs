@@ -103,8 +103,8 @@ namespace osu_Player
             var hsrc = PresentationSource.FromVisual(this) as HwndSource;
             hsrc.AddHook(WndProc);
 
-            if (!File.Exists("settings.osp")) SettingsManager.WriteSettings("settings.osp", new Settings());
-            settings = SettingsManager.ReadSettings("settings.osp");
+            if (!File.Exists("settings.json")) new Settings().Write();
+            settings = Settings.Read();
             if (settings.DisabledSongs == null) settings.DisabledSongs = new List<Song>();
 
             if (settings.OsuPath == null)
@@ -120,7 +120,7 @@ namespace osu_Player
                     {
                         settings.OsuPath =
                             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!";
-                        SettingsManager.WriteSettings("settings.osp", settings);
+                        settings.Write();
                     }
                     else
                     {
@@ -428,7 +428,7 @@ namespace osu_Player
                 );
 
             settings.DisabledSongs.Add(song);
-            SettingsManager.WriteSettings("settings.osp", settings);
+            settings.Write();
 
             _songs.Remove(song);
         }
