@@ -172,6 +172,7 @@ namespace osu_Player
             if (settings.AudioDevice == 0)
             {
                 MessageBox.Show("オーディオデバイスを設定してください。");
+                SongsList.SelectedIndex = -1;
                 OpenSettings(null, null);
                 return;
             }
@@ -195,6 +196,8 @@ namespace osu_Player
             PlayingStatus.Content = "";
             PlayingTitle.Text = s.Title;
             PlayingArtist.Text = s.Artist;
+
+            SongsList.ScrollIntoView(s);
         }
 
         private void PlaySong(object sender, SelectionChangedEventArgs e)
