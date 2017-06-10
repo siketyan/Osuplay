@@ -8,6 +8,14 @@ osu! Playerは、リズムゲーム「osu!」の譜面に使用されている�
 ## 使い方
 Zipファイル内の README.txt をご覧ください。
 
+## オープンソースライセンス
+- [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json)
+
+  > The MIT License (MIT)  
+  >   
+  > Copyright (c) 2007 James Newton-King  
+  > https://github.com/JamesNK/Newtonsoft.Json/blob/master/LICENSE.md
+
 ## リンク
 - osu! - https://osu.ppy.sh/
 - BASS - http://www.un4seen.com/bass.html
