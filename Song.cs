@@ -59,7 +59,7 @@ namespace osu_Player
             Title = properties.ContainsKey("TitleUnicode") ? properties["TitleUnicode"] : properties["Title"];
             Artist = properties.ContainsKey("ArtistUnicode") ? properties["ArtistUnicode"] : properties["Artist"];
             AudioPath = folder.FullName + @"\" + properties["AudioFilename"];
-            ThumbnailPath = folder.FullName + @"\..\..\Data\bt\" + id + ".jpg";
+            ThumbnailPath = MainWindow.GetInstance().settings.OsuPath + @"\Data\bt\" + id + ".jpg";
             Instance = this;
 
             if (!File.Exists(ThumbnailPath))
