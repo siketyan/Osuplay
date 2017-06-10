@@ -613,7 +613,14 @@ namespace osu_Player
                          );
             if (result == MessageBoxResult.OK)
             {
-                Clipboard.SetDataObject(msg, true);
+                var thread = new Thread(() =>
+                {
+                    Clipboard.SetDataObject(msg, true);
+                });
+
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+                thread.Join();
             }
 
             Environment.Exit(0);
