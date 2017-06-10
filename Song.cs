@@ -54,7 +54,7 @@ namespace osu_Player
 
                 if (line.Contains(":"))
                 {
-                    var splitted = line.Split(':');
+                    var splitted = line.Split(new char[] { ':' }, 2);
                     properties.Add(splitted[0], splitted[1].Trim(' '));
                 }
             }
