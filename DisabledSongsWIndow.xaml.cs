@@ -14,7 +14,7 @@ namespace osu_Player
     {
         public bool IsModified { get; private set; }
 
-        private ObservableCollection<Song> _songs;
+        private DispatcherCollection<Song> _songs;
         private MainWindow _instance;
         private Settings _settings;
 
@@ -22,7 +22,7 @@ namespace osu_Player
         {
             InitializeComponent();
 
-            _songs = new ObservableCollection<Song>();
+            _songs = new DispatcherCollection<Song>();
             _instance = MainWindow.GetInstance();
             _settings = _instance.settings;
 
@@ -38,10 +38,7 @@ namespace osu_Player
             
                 foreach (var song in _settings.DisabledSongs)
                 {
-                    Dispatcher.BeginInvoke(
-                        DispatcherPriority.Background,
-                        new ParameterizedThreadStart(AddSong), song
-                    );
+                    _songs.Add(song);
                 }
             }
             catch (Exception ex)

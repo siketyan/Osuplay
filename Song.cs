@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -6,12 +7,22 @@ namespace osu_Player
 {
     public class Song
     {
+        [JsonProperty("title")]
         public string Title { get; set; }
+
+        [JsonProperty("artist")]
         public string Artist { get; set; }
+
+        [JsonProperty("thumbnail_path")]
         public string ThumbnailPath { get; set; }
+
+        [JsonProperty("audio_path")]
         public string AudioPath { get; set; }
+
+        [JsonIgnore]
         public Song Instance { get; set; }
 
+        [JsonIgnore]
         public readonly bool IsBeatmap = true;
 
         public Song(DirectoryInfo folder)
@@ -47,6 +58,7 @@ namespace osu_Player
             Artist = properties.ContainsKey("ArtistUnicode") ? properties["ArtistUnicode"] : properties["Artist"];
             AudioPath = folder.FullName + @"\" + properties["AudioFilename"];
             ThumbnailPath = folder.FullName + @"\..\..\Data\bt\" + id + ".jpg";
+            Instance = this;
 
             if (!File.Exists(ThumbnailPath))
             {

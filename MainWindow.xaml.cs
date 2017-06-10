@@ -89,7 +89,7 @@ namespace osu_Player
             _songs = new DispatcherCollection<Song>();
             _timer = new DispatcherTimer(DispatcherPriority.Normal) { Interval = TimeSpan.FromMilliseconds(100) };
             _timer.Tick += TimerTick;
-            AppDomain.CurrentDomain.FirstChanceException += OnExceptionThrow;
+            //AppDomain.CurrentDomain.FirstChanceException += OnExceptionThrow;
 
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             BassNet.Registration(__Private.MAIL, __Private.CODE);
@@ -467,7 +467,10 @@ namespace osu_Player
                             var song = new Song(subFolder);
                             if (!song.IsBeatmap) continue;
                             if (settings.DisabledSongs.Contains(song)) continue;
-                            _songs.Add(song);
+                            Dispatcher.BeginInvoke((Action)(() =>
+                            {
+                                _songs.Add(song);
+                            }));
                         }
                         catch (Exception ex)
                         {
@@ -578,8 +581,8 @@ namespace osu_Player
 
         private void OnExceptionThrow(object sender, FirstChanceExceptionEventArgs e)
         {
-            if (e.Exception.Source == "PresentationCore"
-             || e.Exception.InnerException.Source == "PresentationCore") return;
+            if (e.Exception.Source == "PresentationCore" ||
+                e.Exception.Source == "System.Xaml") return;
 
             var msg = "予期しない例外が発生したため、osu! Playerを終了します。\n"
                     + "以下のレポートを開発者に報告してください。\n"
