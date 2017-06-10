@@ -1,41 +1,38 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace osu_Player
 {
-    [Serializable]
     public class Settings
     {
-        // 設定項目を追加する場合は、bool型→string型→数値型→リスト→それ以外で、配列は使用しない。
+        private const string PATH = "settings.json";
+
+        [JsonProperty("use_splash")]
         public bool UseSplashScreen { get; set; } = true;
+
+        [JsonProperty("use_animation")]
         public bool UseAnimation { get; set; } = true;
+
+        [JsonProperty("osu_path")]
         public string OsuPath { get; set; }
+
+        [JsonProperty("audio_device")]
         public int AudioDevice { get; set; } = 0;
-        public List<string> DisabledSongs { get; set; }
-    }
 
-    public static class SettingsManager
-    {
-        public static Settings ReadSettings(string path)
+        [JsonProperty("disabled_songs")]
+        public List<Song> DisabledSongs { get; set; }
+
+        public static Settings Read()
         {
-            FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            BinaryFormatter formatter = new BinaryFormatter();
-
-            var settings = (Settings)formatter.Deserialize(stream);
-            stream.Close();
-
-            return settings;
+            var json = File.ReadAllText(PATH);
+            return JsonConvert.DeserializeObject<Settings>(json);
         }
 
-        public static void WriteSettings(string path, Settings settings)
+        public void Write()
         {
-            FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write);
-            BinaryFormatter formatter = new BinaryFormatter();
-
-            formatter.Serialize(stream, settings);
-            stream.Close();
+            var json = JsonConvert.SerializeObject(this);
+            File.WriteAllText(PATH, json);
         }
     }
 }

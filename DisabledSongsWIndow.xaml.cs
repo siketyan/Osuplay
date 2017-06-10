@@ -10,19 +10,19 @@ namespace osu_Player
     /// <summary>
     /// DisabledSongsWIndow.xaml の相互作用ロジック
     /// </summary>
-    public partial class DisabledSongsWIndow : Window
+    public partial class DisabledSongsWindow : Window
     {
         public bool IsModified { get; private set; }
 
-        private ObservableCollection<Song> _songs;
+        private DispatcherCollection<Song> _songs;
         private MainWindow _instance;
         private Settings _settings;
 
-        public DisabledSongsWIndow()
+        public DisabledSongsWindow()
         {
             InitializeComponent();
 
-            _songs = new ObservableCollection<Song>();
+            _songs = new DispatcherCollection<Song>();
             _instance = MainWindow.GetInstance();
             _settings = _instance.settings;
 
@@ -36,13 +36,9 @@ namespace osu_Player
             {
                 _songs.Clear();
             
-                foreach (var tag in _settings.DisabledSongs)
+                foreach (var song in _settings.DisabledSongs)
                 {
-                    var song = new Song(tag);
-                    Dispatcher.BeginInvoke(
-                        DispatcherPriority.Background,
-                        new ParameterizedThreadStart(AddSong), song
-                    );
+                    _songs.Add(song);
                 }
             }
             catch (Exception ex)
@@ -64,22 +60,16 @@ namespace osu_Player
 
         private void EnableSong(object sender, RoutedEventArgs e)
         {
-            var tag = (string)((MenuItem)sender).Tag;
+            var song = (Song)((MenuItem)sender).Tag;
 
-            if (_settings.DisabledSongs.Contains(tag))
+            if (_settings.DisabledSongs.Contains(song))
             {
                 IsModified = true;
                 
-                _settings.DisabledSongs.Remove(tag);
-                SettingsManager.WriteSettings("settings.osp", _settings);
+                _settings.DisabledSongs.Remove(song);
+                _settings.Write();
 
-                foreach (var song in _songs)
-                {
-                    if (song.Tag != tag) continue;
-
-                    _songs.Remove(song);
-                    break;
-                }
+                _songs.Remove(song);
             }
             else
             {

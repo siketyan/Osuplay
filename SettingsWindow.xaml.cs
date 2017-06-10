@@ -51,7 +51,7 @@ namespace osu_Player
 
         private void OpenDisabledSongs(object sender, RoutedEventArgs e)
         {
-            var window = new DisabledSongsWIndow()
+            var window = new DisabledSongsWindow()
             {
                 Owner = this
             };
@@ -68,7 +68,7 @@ namespace osu_Player
             _settings.UseSplashScreen = (bool)UseSplashScreen.IsChecked;
             _instance.settings = _settings;
 
-            SettingsManager.WriteSettings("settings.osp", _settings);
+            _settings.Write();
             MainWindow.GetInstance().Activate();
             Close();
 

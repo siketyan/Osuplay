@@ -11,10 +11,10 @@
     <Window.Resources>
         <DataTemplate x:Key="SongsListTemplate">
             <DockPanel HorizontalAlignment="Stretch" Width="Auto" LastChildFill="True"
-                           Margin="5,2" Tag="{Binding Tag}" MouseLeftButtonDown="PlaySong">
+                       Margin="5,2" Tag="{Binding Instance}">
                 <DockPanel.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="非表示" Tag="{Binding Tag}" Click="DisableSong" />
+                        <MenuItem Header="非表示" Tag="{Binding Instance}" Click="DisableSong" />
                     </ContextMenu>
                 </DockPanel.ContextMenu>
                 
@@ -26,9 +26,9 @@
                 </Image>
                 <StackPanel Margin="5,0,0,0" DockPanel.Dock="Left">
                     <TextBlock Foreground="#272727" Padding="5,1" FontWeight="Bold" Text="{Binding Title}"
-                                   TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                               TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                     <TextBlock Foreground="#6A6A6A" Padding="5,0" Text="{Binding Artist}"
-                                   TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                               TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
             </DockPanel>
         </DataTemplate>
@@ -186,7 +186,8 @@
                       HorizontalContentAlignment="Stretch">
             <ListBox x:Name="SongsList" HorizontalContentAlignment="Stretch"
                      ItemTemplate="{DynamicResource SongsListTemplate}" BorderThickness="0"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     SelectionChanged="PlaySong">
                 <ListBox.Template>
                     <ControlTemplate TargetType="ItemsControl">
                         <Border>
@@ -199,6 +200,11 @@
                         <VirtualizingStackPanel VirtualizationMode="Recycling" IsVirtualizing="True" />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <EventSetter Event="PreviewMouseDown" Handler="DisableRightClickSelection" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
             </ListBox>
         </ScrollViewer>
     </Grid>

@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Siketyan")]
 [assembly: AssemblyProduct("osu! Player")]
-[assembly: AssemblyCopyright("Copyright © 2016 Siketyan.")]
+[assembly: AssemblyCopyright("Copyright © 2016-2017 Siketyan.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,7 +51,7 @@ using System.Windows;
 // すべての値を指定するか、下のように '*' を使ってビルドおよびリビジョン番号を 
 // 既定値にすることができます:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2.1.11")]
-[assembly: AssemblyFileVersion("1.2.1.11")]
+[assembly: AssemblyVersion("1.3.0.12")]
+[assembly: AssemblyFileVersion("1.3.0.12")]
 [assembly: Guid("05EA8BF5-DA65-4EF0-BE35-B5CE28169F5E")]
 

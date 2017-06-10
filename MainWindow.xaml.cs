@@ -76,8 +76,8 @@ namespace osu_Player
         private int _windowHeight;
         private int _channel;
         private float _pitch;
-        private string _playing;
         private RepeatMode _repeat = RepeatMode.RepeatAll;
+        private Song _playing;
         private IntPtr lastLParam;
         private IntPtr lastWParam;
 
@@ -103,9 +103,9 @@ namespace osu_Player
             var hsrc = PresentationSource.FromVisual(this) as HwndSource;
             hsrc.AddHook(WndProc);
 
-            if (!File.Exists("settings.osp")) SettingsManager.WriteSettings("settings.osp", new Settings());
-            settings = SettingsManager.ReadSettings("settings.osp");
-            if (settings.DisabledSongs == null) settings.DisabledSongs = new List<string>();
+            if (!File.Exists("settings.json")) new Settings().Write();
+            settings = Settings.Read();
+            if (settings.DisabledSongs == null) settings.DisabledSongs = new List<Song>();
 
             if (settings.OsuPath == null)
             {
@@ -120,7 +120,7 @@ namespace osu_Player
                     {
                         settings.OsuPath =
                             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!";
-                        SettingsManager.WriteSettings("settings.osp", settings);
+                        settings.Write();
                     }
                     else
                     {
@@ -165,41 +165,44 @@ namespace osu_Player
             if (!settings.UseSplashScreen) await RefreshListAsync();
         }
 
-        private void PlaySong(string tag)
+        private void PlaySong(Song s)
         {
-            var data = tag.Split('\t');
-
+            if (s == null) return;
             if (_channel != 0) StopSong();
             if (settings.AudioDevice == 0)
             {
                 MessageBox.Show("オーディオデバイスを設定してください。");
+                SongsList.SelectedIndex = -1;
                 OpenSettings(null, null);
                 return;
             }
 
             Bass.BASS_SetDevice(settings.AudioDevice);
             Bass.BASS_Init(settings.AudioDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
-            _channel = Bass.BASS_StreamCreateFile(data[2], 0L, 0L, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
+            _channel = Bass.BASS_StreamCreateFile(s.AudioPath, 0L, 0L, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
             _channel = BassFx.BASS_FX_TempoCreate(_channel, BASSFlag.BASS_DEFAULT);
-            _playing = tag;
-            _timer.Start();
-            ChangeVolume(null, null);
+            _playing = s;
 
             if (_channel == 0) return;
             if (_isDoubleTime) ToDoubleTime(null, null);
             if (_isNightcore) ToNightcore(null, null);
+
+            _timer.Start();
+            ChangeVolume(null, null);
             Bass.BASS_ChannelPlay(_channel, false);
 
             PlayingStatus.IsEnabled = true;
             PlayingStatus.ToolTip = "曲の再生を一時停止します。";
             PlayingStatus.Content = "";
-            PlayingTitle.Text = data[0];
-            PlayingArtist.Text = data[1];
+            PlayingTitle.Text = s.Title;
+            PlayingArtist.Text = s.Artist;
+
+            SongsList.ScrollIntoView(s);
         }
 
-        private void PlaySong(object sender, MouseButtonEventArgs e)
+        private void PlaySong(object sender, SelectionChangedEventArgs e)
         {
-            PlaySong((string)((DockPanel)sender).Tag);
+            PlaySong((Song)SongsList.SelectedItem);
         }
 
         private void PauseSong(object sender, MouseButtonEventArgs e)
@@ -342,7 +345,7 @@ namespace osu_Player
                                 if (SongsList.SelectedIndex != _songs.Count - 1)
                                 {
                                     SongsList.SelectedIndex++;
-                                    PlaySong(_songs[SongsList.SelectedIndex].Tag);
+                                    PlaySong((Song)SongsList.SelectedItem);
                                     break;
                                 }
 
@@ -363,12 +366,12 @@ namespace osu_Player
                                 {
                                     SongsList.SelectedIndex++;
                                     _timer.Stop();
-                                    PlaySong(_songs[SongsList.SelectedIndex].Tag);
+                                    PlaySong((Song)SongsList.SelectedItem);
                                     break;
                                 }
 
                                 _timer.Stop();
-                                PlaySong(_songs[0].Tag);
+                                PlaySong(_songs[0]);
                                 SongsList.SelectedIndex = 0;
                                 break;
                         }
@@ -421,40 +424,34 @@ namespace osu_Player
 
         private void DisableSong(object sender, RoutedEventArgs e)
         {
-            var tag = (string)((MenuItem)sender).Tag;
+            var song = (Song)((MenuItem)sender).Tag;
 
-            if (settings.DisabledSongs.Contains(tag))
+            if (settings.DisabledSongs.Contains(song))
                 MessageBox.Show(
                     "既に非表示されています。", "osu! Player",
                     MessageBoxButton.OK, MessageBoxImage.Error
                 );
 
-            settings.DisabledSongs.Add(tag);
-            SettingsManager.WriteSettings("settings.osp", settings);
+            settings.DisabledSongs.Add(song);
+            settings.Write();
 
-            foreach (var song in _songs)
-            {
-                if (song.Tag != tag) continue;
-
-                _songs.Remove(song);
-                break;
-            }
+            _songs.Remove(song);
         }
 
-        public async Task<int> RefreshListAsync(bool doShuffle = false)
+        public async Task RefreshListAsync(bool doShuffle = false)
         {
             try
             {
-                IsSearching = true;
-                StopSong();
-
                 if (!Directory.Exists(settings.OsuPath + @"\Songs"))
                 {
                     MessageBox.Show("正しい osu! フォルダの場所を指定してください。", "osu! Player");
                     OpenSettings(null, null);
-                    return 0;
+                    return;
                 }
 
+                IsSearching = true;
+                StopSong();
+                
                 PlayingStatus.ToolTip = null;
                 PlayingStatus.Content = "";
                 PlayingTitle.Text = "曲を検索しています";
@@ -474,8 +471,11 @@ namespace osu_Player
                         {
                             var song = new Song(subFolder);
                             if (!song.IsBeatmap) continue;
-                            if (settings.DisabledSongs.Contains(song.Tag)) continue;
-                            _songs.Add(song);
+                            if (settings.DisabledSongs.Contains(song)) continue;
+                            Dispatcher.BeginInvoke((Action)(() =>
+                            {
+                                _songs.Add(song);
+                            }));
                         }
                         catch (Exception ex)
                         {
@@ -493,8 +493,6 @@ namespace osu_Player
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace, ex.GetType().ToString());
             }
-
-            return 0;
         }
 
         private void ChangeMargin(object sender, EventArgs e)
@@ -548,6 +546,12 @@ namespace osu_Player
             }
         }
 
+        private void DisableRightClickSelection(object sender, MouseEventArgs e)
+        {
+            if (e.RightButton == MouseButtonState.Pressed)
+                e.Handled = true;
+        }
+
         public static MainWindow GetInstance()
         {
             return _instance;
@@ -582,8 +586,8 @@ namespace osu_Player
 
         private void OnExceptionThrow(object sender, FirstChanceExceptionEventArgs e)
         {
-            if (e.Exception.Source == "PresentationCore"
-             || e.Exception.InnerException.Source == "PresentationCore") return;
+            if (e.Exception.Source == "PresentationCore" ||
+                e.Exception.Source == "System.Xaml") return;
 
             var msg = "予期しない例外が発生したため、osu! Playerを終了します。\n"
                     + "以下のレポートを開発者に報告してください。\n"
@@ -609,7 +613,14 @@ namespace osu_Player
                          );
             if (result == MessageBoxResult.OK)
             {
-                Clipboard.SetDataObject(msg, true);
+                var thread = new Thread(() =>
+                {
+                    Clipboard.SetDataObject(msg, true);
+                });
+
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+                thread.Join();
             }
 
             Environment.Exit(0);

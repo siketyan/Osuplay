@@ -1,19 +1,36 @@
-﻿using System.IO;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace osu_Player
 {
     public class Song
     {
+        [JsonProperty("title")]
         public string Title { get; set; }
-        public string Artist { get; set; }
-        public string ThumbnailPath { get; set; }
-        public string AudioPath { get; set; }
-        public string Tag { get; set; }
 
+        [JsonProperty("artist")]
+        public string Artist { get; set; }
+
+        [JsonProperty("thumbnail_path")]
+        public string ThumbnailPath { get; set; }
+
+        [JsonProperty("audio_path")]
+        public string AudioPath { get; set; }
+
+        [JsonIgnore]
+        public Song Instance { get; set; }
+
+        [JsonIgnore]
         public readonly bool IsBeatmap = true;
 
-        public Song(DirectoryInfo folder)
+        public Song()
+        {
+            Instance = this;
+        }
+
+        public Song(DirectoryInfo folder) : this()
         {
             var osuFile = folder.GetFiles("*.osu", SearchOption.TopDirectoryOnly);
             if (osuFile.Length < 1)
@@ -22,63 +39,51 @@ namespace osu_Player
                 return;
             }
 
+            var id = (long)-1;
+            if (Regex.IsMatch(folder.Name, @"^[0-9]+"))
+            {
+                id = long.Parse(new Regex(@"^[0-9]+").Match(folder.Name).Groups[0].ToString());
+            }
+
+            var properties = new Dictionary<string, string>();
             var stream = new StreamReader(osuFile[0].FullName);
             while (!stream.EndOfStream)
             {
                 var line = stream.ReadLine();
+                if (line == null) continue;
 
-                if (line != null && Regex.IsMatch(line, @"^Title:.+$"))
+                if (line.Contains(":"))
                 {
-                    Title = new Regex(@"^Title:(.+)$").Match(line).Groups[1].ToString();
-                }
-
-                if (line != null && Regex.IsMatch(line, @"^TitleUnicode:.+$"))
-                {
-                    Title = new Regex(@"^TitleUnicode:(.+)$").Match(line).Groups[1].ToString();
-                }
-
-                if (line != null && Regex.IsMatch(line, @"^Artist:.+$"))
-                {
-                    Artist = new Regex(@"^Artist:(.+)$").Match(line).Groups[1].ToString();
-                }
-
-                if (line != null && Regex.IsMatch(line, @"^ArtistUnicode:.+$"))
-                {
-                    Artist = new Regex(@"^ArtistUnicode:(.+)$").Match(line).Groups[1].ToString();
-                }
-
-                if (line != null && Regex.IsMatch(line, @"^AudioFilename:\s?.+$"))
-                {
-                    AudioPath = folder.FullName + @"\" + new Regex(@"^AudioFilename:\s?(.+)$").Match(line).Groups[1];
-                }
-
-                //MessageBox.Show(@"^\d,\d,(\d,)?"".+"",\d,\d$");
-                if (ThumbnailPath == null && line != null &&
-                    Regex.IsMatch(line, @"^\d,\d,(\d,)?""(.+\.(jpg|png))""(,\d,\d)?$", RegexOptions.IgnoreCase))
-                {
-                    ThumbnailPath =
-                        folder.FullName + @"\" + new Regex(@"^\d,\d,(\d,)?""(.+)""(,\d,\d)?$").Match(line).Groups[2];
+                    var splitted = line.Split(new char[] { ':' }, 2);
+                    if (!properties.ContainsKey(splitted[0]))
+                        properties.Add(splitted[0], splitted[1].Trim(' '));
                 }
             }
 
-            if (ThumbnailPath == null || !File.Exists(ThumbnailPath))
+            Title = properties.ContainsKey("TitleUnicode") ? properties["TitleUnicode"] : properties["Title"];
+            Artist = properties.ContainsKey("ArtistUnicode") ? properties["ArtistUnicode"] : properties["Artist"];
+            AudioPath = folder.FullName + @"\" + properties["AudioFilename"];
+            ThumbnailPath = MainWindow.GetInstance().settings.OsuPath + @"\Data\bt\" + id + ".jpg";
+
+            if (!File.Exists(ThumbnailPath))
             {
                 ThumbnailPath = "Resources/unknown.png";
             }
 
-            Tag = Title + "\t" + Artist + "\t" + AudioPath + "\t" + ThumbnailPath;
-            stream.Dispose();            
+            stream.Dispose();
         }
 
-        public Song(string tag)
+        public override bool Equals(object obj)
         {
-            var data = tag.Split('\t');
+            if (!(obj is Song)) return false;
+            var song = (Song)obj;
 
-            Title = data[0];
-            Artist = data[1];
-            AudioPath = data[2];
-            ThumbnailPath = data[3];
-            Tag = tag;
+            return song.AudioPath == AudioPath;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

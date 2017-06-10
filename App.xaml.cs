@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.ExceptionServices;
 using System.Windows;
 
-namespace osu__Player
+namespace osu_Player
 {
     /// <summary>
     /// App.xaml の相互作用ロジック
