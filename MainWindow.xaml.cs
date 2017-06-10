@@ -103,10 +103,19 @@ namespace osu_Player
             var hsrc = PresentationSource.FromVisual(this) as HwndSource;
             hsrc.AddHook(WndProc);
 
-            if (!File.Exists("settings.json")) new Settings().Write();
-            settings = Settings.Read();
-            if (settings.DisabledSongs == null) settings.DisabledSongs = new List<Song>();
+            if (!File.Exists("settings.json"))
+            {
+                new Settings { Version = Settings.VERSION }.Write();
+            }
 
+            settings = Settings.Read();
+            if (settings.Version != Settings.VERSION)
+            {
+                MessageBox.Show("設定ファイルのバージョンが異なるため、使用できません。\n削除または移動してから再試行してください。");
+                Environment.Exit(0);
+            }
+
+            if (settings.DisabledSongs == null) settings.DisabledSongs = new List<Song>();
             if (settings.OsuPath == null)
             {
                 if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!"))

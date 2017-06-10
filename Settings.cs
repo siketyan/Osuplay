@@ -6,7 +6,11 @@ namespace osu_Player
 {
     public class Settings
     {
+        public const int VERSION = 0x01;
         private const string PATH = "settings.json";
+
+        [JsonProperty("version")]
+        public int? Version { get; set; }
 
         [JsonProperty("use_splash")]
         public bool UseSplashScreen { get; set; } = true;

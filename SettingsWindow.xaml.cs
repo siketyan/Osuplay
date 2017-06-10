@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using osu_Player.Properties;
 using Un4seen.Bass;
 
 namespace osu_Player
