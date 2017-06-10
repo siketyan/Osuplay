@@ -25,25 +25,14 @@ namespace osu_Player
 
         public static Settings Read()
         {
-            string json;
-            using (var stream = new FileStream(PATH, FileMode.Open, FileAccess.Read))
-            using (var reader = new StreamReader(stream))
-            {
-                json = reader.ReadToEnd();
-            }
-
+            var json = File.ReadAllText(PATH);
             return JsonConvert.DeserializeObject<Settings>(json);
         }
 
         public void Write()
         {
             var json = JsonConvert.SerializeObject(this);
-            using (var stream = new FileStream(PATH, FileMode.OpenOrCreate, FileAccess.Write))
-            using (var writer = new StreamWriter(stream))
-            {
-                writer.Write(json);
-                writer.Flush();
-            }
+            File.WriteAllText(PATH, json);
         }
     }
 }

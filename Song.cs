@@ -25,6 +25,8 @@ namespace osu_Player
         [JsonIgnore]
         public readonly bool IsBeatmap = true;
 
+        public Song() {}
+
         public Song(DirectoryInfo folder)
         {
             var osuFile = folder.GetFiles("*.osu", SearchOption.TopDirectoryOnly);
@@ -66,6 +68,17 @@ namespace osu_Player
             }
 
             stream.Dispose();
+        }
+
+        public override bool Equals(object obj)
+        {
+            var song = (Song)obj;
+            return song.AudioPath == AudioPath;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

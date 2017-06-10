@@ -89,7 +89,7 @@ namespace osu_Player
             _songs = new DispatcherCollection<Song>();
             _timer = new DispatcherTimer(DispatcherPriority.Normal) { Interval = TimeSpan.FromMilliseconds(100) };
             _timer.Tick += TimerTick;
-            //AppDomain.CurrentDomain.FirstChanceException += OnExceptionThrow;
+            AppDomain.CurrentDomain.FirstChanceException += OnExceptionThrow;
 
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             BassNet.Registration(__Private.MAIL, __Private.CODE);
