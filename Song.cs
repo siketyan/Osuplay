@@ -25,9 +25,12 @@ namespace osu_Player
         [JsonIgnore]
         public readonly bool IsBeatmap = true;
 
-        public Song() {}
+        public Song()
+        {
+            Instance = this;
+        }
 
-        public Song(DirectoryInfo folder)
+        public Song(DirectoryInfo folder) : this()
         {
             var osuFile = folder.GetFiles("*.osu", SearchOption.TopDirectoryOnly);
             if (osuFile.Length < 1)
@@ -60,7 +63,6 @@ namespace osu_Player
             Artist = properties.ContainsKey("ArtistUnicode") ? properties["ArtistUnicode"] : properties["Artist"];
             AudioPath = folder.FullName + @"\" + properties["AudioFilename"];
             ThumbnailPath = MainWindow.GetInstance().settings.OsuPath + @"\Data\bt\" + id + ".jpg";
-            Instance = this;
 
             if (!File.Exists(ThumbnailPath))
             {
