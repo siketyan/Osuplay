@@ -36,9 +36,8 @@ namespace osu_Player
             {
                 _songs.Clear();
             
-                foreach (var tag in _settings.DisabledSongs)
+                foreach (var song in _settings.DisabledSongs)
                 {
-                    var song = new Song(tag);
                     Dispatcher.BeginInvoke(
                         DispatcherPriority.Background,
                         new ParameterizedThreadStart(AddSong), song
@@ -64,22 +63,16 @@ namespace osu_Player
 
         private void EnableSong(object sender, RoutedEventArgs e)
         {
-            var tag = (string)((MenuItem)sender).Tag;
+            var song = (Song)((MenuItem)sender).Tag;
 
-            if (_settings.DisabledSongs.Contains(tag))
+            if (_settings.DisabledSongs.Contains(song))
             {
                 IsModified = true;
                 
-                _settings.DisabledSongs.Remove(tag);
+                _settings.DisabledSongs.Remove(song);
                 SettingsManager.WriteSettings("settings.osp", _settings);
 
-                foreach (var song in _songs)
-                {
-                    if (song.Tag != tag) continue;
-
-                    _songs.Remove(song);
-                    break;
-                }
+                _songs.Remove(song);
             }
             else
             {

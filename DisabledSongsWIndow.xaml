@@ -12,7 +12,7 @@
             <DockPanel HorizontalAlignment="Stretch" Width="Auto" LastChildFill="True" Margin="5,2">
                 <DockPanel.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="復元" Tag="{Binding Tag}" Click="EnableSong" />
+                        <MenuItem Header="復元" Tag="{Binding Instance}" Click="EnableSong" />
                     </ContextMenu>
                 </DockPanel.ContextMenu>
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows;
 
 namespace osu_Player
 {
@@ -13,7 +14,7 @@ namespace osu_Player
         public bool UseAnimation { get; set; } = true;
         public string OsuPath { get; set; }
         public int AudioDevice { get; set; } = 0;
-        public List<string> DisabledSongs { get; set; }
+        public List<Song> DisabledSongs { get; set; }
     }
 
     public static class SettingsManager
@@ -31,7 +32,7 @@ namespace osu_Player
 
         public static void WriteSettings(string path, Settings settings)
         {
-            FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write);
+            FileStream stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write);
             BinaryFormatter formatter = new BinaryFormatter();
 
             formatter.Serialize(stream, settings);

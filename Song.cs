@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Windows;
 
 namespace osu_Player
 {
@@ -11,7 +10,7 @@ namespace osu_Player
         public string Artist { get; set; }
         public string ThumbnailPath { get; set; }
         public string AudioPath { get; set; }
-        public string Tag { get; set; }
+        public Song Instance { get; set; }
 
         public readonly bool IsBeatmap = true;
 
@@ -54,19 +53,7 @@ namespace osu_Player
                 ThumbnailPath = "Resources/unknown.png";
             }
 
-            Tag = Title + "\t" + Artist + "\t" + AudioPath + "\t" + ThumbnailPath;
             stream.Dispose();
-        }
-
-        public Song(string tag)
-        {
-            var data = tag.Split('\t');
-
-            Title = data[0];
-            Artist = data[1];
-            AudioPath = data[2];
-            ThumbnailPath = data[3];
-            Tag = tag;
         }
     }
 }
