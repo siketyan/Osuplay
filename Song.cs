@@ -66,9 +66,9 @@ namespace osu_Player
             ThumbnailPath = MainWindow.GetInstance().settings.OsuPath + @"\Data\bt\" + id + ".jpg";
 
             if (!File.Exists(ThumbnailPath))
-            {
+                ThumbnailPath = MainWindow.GetInstance().settings.OsuPath + @"\Data\bt\" + id + "l.jpg";
+            if (!File.Exists(ThumbnailPath))
                 ThumbnailPath = "Resources/unknown.png";
-            }
 
             stream.Dispose();
         }
