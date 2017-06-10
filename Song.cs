@@ -72,7 +72,9 @@ namespace osu_Player
 
         public override bool Equals(object obj)
         {
+            if (!(obj is Song)) return false;
             var song = (Song)obj;
+
             return song.AudioPath == AudioPath;
         }
 
