@@ -167,6 +167,7 @@ namespace osu_Player
 
         private void PlaySong(Song s)
         {
+            if (s == null) return;
             if (_channel != 0) StopSong();
             if (settings.AudioDevice == 0)
             {
@@ -180,12 +181,13 @@ namespace osu_Player
             _channel = Bass.BASS_StreamCreateFile(s.AudioPath, 0L, 0L, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
             _channel = BassFx.BASS_FX_TempoCreate(_channel, BASSFlag.BASS_DEFAULT);
             _playing = s;
-            _timer.Start();
-            ChangeVolume(null, null);
 
             if (_channel == 0) return;
             if (_isDoubleTime) ToDoubleTime(null, null);
             if (_isNightcore) ToNightcore(null, null);
+
+            _timer.Start();
+            ChangeVolume(null, null);
             Bass.BASS_ChannelPlay(_channel, false);
 
             PlayingStatus.IsEnabled = true;
