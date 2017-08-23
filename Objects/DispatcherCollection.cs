@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using System.Threading;
 using System.Windows.Threading;
 
-namespace osu_Player
+namespace osu_Player.Objects
 {
     public class DispatcherCollection<T> : ObservableCollection<T>
     {

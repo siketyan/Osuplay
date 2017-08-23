@@ -2,8 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:osu_Player"
-             StartupUri="MainWindow.xaml">
+             StartupUri="Windows/MainWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary Source="Generic.xaml"/>
+        <ResourceDictionary Source="Resources/Generic.xaml"/>
     </Application.Resources>
 </Application>

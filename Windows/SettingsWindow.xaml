@@ -1,4 +1,4 @@
-﻿<Window x:Class="osu_Player.SettingsWindow"
+﻿<Window x:Class="osu_Player.Windows.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -14,7 +14,7 @@
 
         <Grid Grid.Row="0" Background="#FF66AA">
             <DockPanel Margin="5,2" LastChildFill="False">
-                <Label FontFamily="Resources/#FontAwesome" Foreground="White"></Label>
+                <Label FontFamily="../Resources/#FontAwesome" Foreground="White"></Label>
                 <Label Foreground="White" Padding="3,3,0,0">Settings - osu! Player</Label>
                 <Button Template="{StaticResource WindowControlButtonTemplate}" Click="CloseWindowAsync"
                         WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand" DockPanel.Dock="Right">r</Button>

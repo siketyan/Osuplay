@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using osu_Player.Objects;
 
-namespace osu_Player
+namespace osu_Player.Windows
 {
     /// <summary>
     /// DisabledSongsWIndow.xaml の相互作用ロジック

@@ -33,7 +33,7 @@
     </Style>
 
     <Style TargetType="{x:Type Label}" x:Key="ActionLabelStyle">
-        <Setter Property="FontFamily" Value="Resources/#FontAwesome" />
+        <Setter Property="FontFamily" Value="./#FontAwesome" />
         <Setter Property="Foreground" Value="#222" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />

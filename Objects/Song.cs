@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using osu_Player.Windows;
 
-namespace osu_Player
+namespace osu_Player.Objects
 {
     public class Song
     {
@@ -68,7 +69,7 @@ namespace osu_Player
             if (!File.Exists(ThumbnailPath))
                 ThumbnailPath = MainWindow.GetInstance().settings.OsuPath + @"\Data\bt\" + id + "l.jpg";
             if (!File.Exists(ThumbnailPath))
-                ThumbnailPath = "Resources/unknown.png";
+                ThumbnailPath = "../Resources/unknown.png";
 
             stream.Dispose();
         }

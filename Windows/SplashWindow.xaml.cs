@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace osu_Player
+namespace osu_Player.Windows
 {
     /// <summary>
     /// SplashWindow.xaml の相互作用ロジック

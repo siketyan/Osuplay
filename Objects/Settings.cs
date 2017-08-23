@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace osu_Player
+namespace osu_Player.Objects
 {
     public class Settings
     {
