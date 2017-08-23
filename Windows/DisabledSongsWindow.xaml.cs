@@ -66,12 +66,7 @@ namespace osu_Player.Windows
             }
             else
             {
-                MessageBox.Show(
-                    "この曲は既に復元されています。",
-                    "osu! Player",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                new MessageWindow("この曲は既に復元されています。").ShowDialog();
             }
         }
 
