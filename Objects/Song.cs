@@ -47,15 +47,17 @@ namespace osu_Player.Objects
             }
 
             var properties = new Dictionary<string, string>();
-            var stream = new StreamReader(osuFile[0].FullName);
-            while (!stream.EndOfStream)
+            using (var stream = new StreamReader(osuFile[0].FullName))
             {
-                var line = stream.ReadLine();
-                if (line == null || !line.Contains(":")) continue;
-                
-                var splitted = line.Split(new[] { ':' }, 2);
-                if (!properties.ContainsKey(splitted[0]))
-                    properties.Add(splitted[0], splitted[1].Trim(' '));
+                while (!stream.EndOfStream)
+                {
+                    var line = stream.ReadLine();
+                    if (line == null || !line.Contains(":")) continue;
+
+                    var splitted = line.Split(new[] {':'}, 2);
+                    if (!properties.ContainsKey(splitted[0]))
+                        properties.Add(splitted[0], splitted[1].Trim(' '));
+                }
             }
 
             Title = properties.ContainsKey("TitleUnicode") ? properties["TitleUnicode"] : properties["Title"];
@@ -67,8 +69,6 @@ namespace osu_Player.Objects
                 ThumbnailPath = MainWindow.GetInstance().Settings.OsuPath + @"\Data\bt\" + id + "l.jpg";
             if (!File.Exists(ThumbnailPath))
                 ThumbnailPath = "../Resources/unknown.png";
-
-            stream.Dispose();
         }
 
         public override bool Equals(object obj)
