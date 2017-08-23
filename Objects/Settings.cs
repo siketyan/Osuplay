@@ -6,11 +6,11 @@ namespace osu_Player.Objects
 {
     public class Settings
     {
-        public const int VERSION = 0x01;
-        private const string PATH = "settings.json";
+        public const int Version = 0x01;
+        private const string Path = "settings.json";
 
         [JsonProperty("version")]
-        public int? Version { get; set; }
+        public int? CurrentVersion { get; set; }
 
         [JsonProperty("use_splash")]
         public bool UseSplashScreen { get; set; } = true;
@@ -29,14 +29,14 @@ namespace osu_Player.Objects
 
         public static Settings Read()
         {
-            var json = File.ReadAllText(PATH);
+            var json = File.ReadAllText(Path);
             return JsonConvert.DeserializeObject<Settings>(json);
         }
 
         public void Write()
         {
             var json = JsonConvert.SerializeObject(this);
-            File.WriteAllText(PATH, json);
+            File.WriteAllText(Path, json);
         }
     }
 }

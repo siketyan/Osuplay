@@ -8,21 +8,19 @@ namespace osu_Player.Windows
     /// <summary>
     /// DisabledSongsWIndow.xaml の相互作用ロジック
     /// </summary>
-    public partial class DisabledSongsWindow : Window
+    public partial class DisabledSongsWindow
     {
         public bool IsModified { get; private set; }
 
-        private DispatcherCollection<Song> _songs;
-        private MainWindow _instance;
-        private Settings _settings;
+        private readonly DispatcherCollection<Song> _songs;
+        private readonly Settings _settings;
 
         public DisabledSongsWindow()
         {
             InitializeComponent();
 
             _songs = new DispatcherCollection<Song>();
-            _instance = MainWindow.GetInstance();
-            _settings = _instance.settings;
+            _settings = MainWindow.GetInstance().Settings;
 
             SongsList.ItemsSource = _songs;            
             DataContext = this;
@@ -41,19 +39,16 @@ namespace osu_Player.Windows
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    ex.InnerException.GetType().ToString() + "\n"
-                        + ex.InnerException.Message + "\n"
-                        + ex.InnerException.StackTrace + "\n"
-                );
+                var inner = ex.InnerException;
+                if (inner != null)
+                {
+                    MessageBox.Show(
+                        $"{inner.GetType()}\n{inner.Message}\n{inner.StackTrace}"
+                    );
+                }
             }
             
             Status.Content = "右クリックメニューから復元できます。";
-        }
-
-        private void AddSong(object song)
-        {
-            _songs.Add((Song)song);
         }
 
         private void EnableSong(object sender, RoutedEventArgs e)
@@ -71,7 +66,12 @@ namespace osu_Player.Windows
             }
             else
             {
-                MessageBox.Show("この曲は既に復元されています。", "osu! Player", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    "この曲は既に復元されています。",
+                    "osu! Player",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
 
