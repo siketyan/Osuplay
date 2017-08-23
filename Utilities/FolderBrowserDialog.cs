@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using CommonDialog = Microsoft.Win32.CommonDialog;
 using FolderBrowserDialogForms = System.Windows.Forms.FolderBrowserDialog;
 
@@ -17,7 +18,7 @@ namespace osu_Player.Utilities
             Reset();
         }
 
-        public override void Reset()
+        public sealed override void Reset()
         {
             Description = string.Empty;
             RootFolder = Environment.SpecialFolder.Desktop;
@@ -27,17 +28,12 @@ namespace osu_Player.Utilities
 
         private class Win32Window : IWin32Window
         {
-            private IntPtr _handle;
-
             public Win32Window(IntPtr handle)
             {
-                _handle = handle;
+                Handle = handle;
             }
 
-            public IntPtr Handle
-            {
-                get { return _handle; }
-            }
+            public IntPtr Handle { get; }
         }
 
         protected override bool RunDialog(IntPtr hwndOwner)

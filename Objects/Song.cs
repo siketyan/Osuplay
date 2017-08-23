@@ -51,23 +51,20 @@ namespace osu_Player.Objects
             while (!stream.EndOfStream)
             {
                 var line = stream.ReadLine();
-                if (line == null) continue;
-
-                if (line.Contains(":"))
-                {
-                    var splitted = line.Split(new char[] { ':' }, 2);
-                    if (!properties.ContainsKey(splitted[0]))
-                        properties.Add(splitted[0], splitted[1].Trim(' '));
-                }
+                if (line == null || !line.Contains(":")) continue;
+                
+                var splitted = line.Split(new[] { ':' }, 2);
+                if (!properties.ContainsKey(splitted[0]))
+                    properties.Add(splitted[0], splitted[1].Trim(' '));
             }
 
             Title = properties.ContainsKey("TitleUnicode") ? properties["TitleUnicode"] : properties["Title"];
             Artist = properties.ContainsKey("ArtistUnicode") ? properties["ArtistUnicode"] : properties["Artist"];
             AudioPath = folder.FullName + @"\" + properties["AudioFilename"];
-            ThumbnailPath = MainWindow.GetInstance().settings.OsuPath + @"\Data\bt\" + id + ".jpg";
+            ThumbnailPath = MainWindow.GetInstance().Settings.OsuPath + @"\Data\bt\" + id + ".jpg";
 
             if (!File.Exists(ThumbnailPath))
-                ThumbnailPath = MainWindow.GetInstance().settings.OsuPath + @"\Data\bt\" + id + "l.jpg";
+                ThumbnailPath = MainWindow.GetInstance().Settings.OsuPath + @"\Data\bt\" + id + "l.jpg";
             if (!File.Exists(ThumbnailPath))
                 ThumbnailPath = "../Resources/unknown.png";
 

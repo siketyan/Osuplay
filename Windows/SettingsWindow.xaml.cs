@@ -11,17 +11,17 @@ namespace osu_Player.Windows
     /// </summary>
     public partial class SettingsWindow
     {
+        private readonly string _currentOsuPath;
+        private readonly MainWindow _instance;
+        private readonly Settings _settings;
+
         private bool _isDisabledSongsModified;
-        private string _currentOsuPath;
-        private int _currentAudioDevice;
-        private MainWindow _instance;
-        private Settings _settings;
 
         public SettingsWindow()
         {
             InitializeComponent();
             _instance = MainWindow.GetInstance();
-            _settings = _instance.settings;
+            _settings = _instance.Settings;
 
             foreach (var bdi in Bass.BASS_GetDeviceInfos())
             {
@@ -32,7 +32,7 @@ namespace osu_Player.Windows
             }
             
             OsuPath.Text = _currentOsuPath = _settings.OsuPath;
-            AudioDevice.SelectedIndex = _currentAudioDevice = _settings.AudioDevice;
+            AudioDevice.SelectedIndex = _settings.AudioDevice;
             UseAnimation.IsChecked = _settings.UseAnimation;
             UseSplashScreen.IsChecked = _settings.UseSplashScreen;
         }
@@ -67,7 +67,7 @@ namespace osu_Player.Windows
             _settings.AudioDevice = AudioDevice.SelectedIndex;
             _settings.UseAnimation = (bool)UseAnimation.IsChecked;
             _settings.UseSplashScreen = (bool)UseSplashScreen.IsChecked;
-            _instance.settings = _settings;
+            _instance.Settings = _settings;
 
             _settings.Write();
             MainWindow.GetInstance().Activate();

@@ -1,22 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Un4seen.Bass;
-using System.Linq;
-using System.Collections.Generic;
 using Un4seen.Bass.AddOn.Fx;
-using System.Reflection;
-using System.Runtime.ExceptionServices;
-using System.Windows.Media.Animation;
-using System.Threading;
 using osu_Player.Enums;
 using osu_Player.Objects;
 using osu_Player.Utilities;
@@ -28,11 +28,11 @@ namespace osu_Player.Windows
     /// </summary>
     public partial class MainWindow
     {
-        public Settings settings;
+        public Settings Settings { get; set; }
 
         private bool IsPausing
         {
-            get { return _isPausing; }
+            get => _isPausing;
             set
             {
                 PlayingStatus.Content = value ? "" : "";
@@ -62,13 +62,13 @@ namespace osu_Player.Windows
             }
         }
         
-        private const int WM_SIZE = 0x0005;
-        private const int WM_ENTERSIZEMOVE = 0x0231;
-        private const int WM_EXITSIZEMOVE = 0x0232;
+        private const int WmSize = 0x0005;
+        private const int WmEnterSizeMove = 0x0231;
+        private const int WmExitSizeMove = 0x0232;
         
         private static MainWindow _instance;
 
-        private DispatcherCollection<Song> _songs;
+        private readonly DispatcherCollection<Song> _songs;
         private readonly DispatcherTimer _timer;
         private readonly SolidColorBrush _brush = new SolidColorBrush(Color.FromRgb(34, 34, 34));
 
@@ -81,8 +81,8 @@ namespace osu_Player.Windows
         private float _pitch;
         private RepeatMode _repeat = RepeatMode.RepeatAll;
         private Song _playing;
-        private IntPtr lastLParam;
-        private IntPtr lastWParam;
+        private IntPtr _lastLParam;
+        private IntPtr _lastWParam;
 
         public MainWindow()
         {
@@ -108,31 +108,33 @@ namespace osu_Player.Windows
 
             if (!File.Exists("settings.json"))
             {
-                new Settings { Version = Settings.VERSION }.Write();
+                new Settings { CurrentVersion = Settings.Version }.Write();
             }
 
-            settings = Settings.Read();
-            if (settings.Version != Settings.VERSION)
+            Settings = Settings.Read();
+            if (Settings.CurrentVersion != Settings.Version)
             {
                 MessageBox.Show("設定ファイルのバージョンが異なるため、使用できません。\n削除または移動してから再試行してください。");
                 Environment.Exit(0);
             }
 
-            if (settings.DisabledSongs == null) settings.DisabledSongs = new List<Song>();
-            if (settings.OsuPath == null)
+            if (Settings.DisabledSongs == null) Settings.DisabledSongs = new List<Song>();
+            if (Settings.OsuPath == null)
             {
                 if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!"))
                 {
                     var result = MessageBox.Show(
                         "既定の場所にosu!フォルダが見つかりました。他の場所のosu!フォルダを使用しますか？",
-                        "osu! Player", MessageBoxButton.YesNo, MessageBoxImage.Question
+                        "osu! Player",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question
                     );
 
                     if (result == MessageBoxResult.No)
                     {
-                        settings.OsuPath =
+                        Settings.OsuPath =
                             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!";
-                        settings.Write();
+                        Settings.Write();
                     }
                     else
                     {
@@ -142,7 +144,7 @@ namespace osu_Player.Windows
                 }
             }
 
-            if (settings.UseSplashScreen)
+            if (Settings.UseSplashScreen)
             {
                 var splash = new SplashWindow();
                 splash.Show();
@@ -153,12 +155,12 @@ namespace osu_Player.Windows
                 splash.Close();
             }
 
-            if (settings.UseAnimation)
+            if (Settings.UseAnimation)
             {
                 await Task.Run(() => Thread.Sleep(1000));
                 Activate();
 
-                Storyboard sb = FindResource("StartAnimation") as Storyboard;
+                var sb = FindResource("StartAnimation") as Storyboard;
                 Storyboard.SetTarget(sb, this);
                 sb.Completed += (s, a) =>
                 {
@@ -174,14 +176,14 @@ namespace osu_Player.Windows
                 ShowInTaskbar = true;
             }
             
-            if (!settings.UseSplashScreen) await RefreshListAsync();
+            if (!Settings.UseSplashScreen) await RefreshListAsync();
         }
 
         private void PlaySong(Song s)
         {
             if (s == null) return;
             if (_channel != 0) StopSong();
-            if (settings.AudioDevice == 0)
+            if (Settings.AudioDevice == 0)
             {
                 MessageBox.Show("オーディオデバイスを設定してください。");
                 SongsList.SelectedIndex = -1;
@@ -189,8 +191,8 @@ namespace osu_Player.Windows
                 return;
             }
 
-            Bass.BASS_SetDevice(settings.AudioDevice);
-            Bass.BASS_Init(settings.AudioDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
+            Bass.BASS_SetDevice(Settings.AudioDevice);
+            Bass.BASS_Init(Settings.AudioDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
             _channel = Bass.BASS_StreamCreateFile(s.AudioPath, 0L, 0L, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_DECODE);
             _channel = BassFx.BASS_FX_TempoCreate(_channel, BASSFlag.BASS_DEFAULT);
             _playing = s;
@@ -403,20 +405,16 @@ namespace osu_Player.Windows
         private void OnClosing(object sender, CancelEventArgs e)
         {
             StopSong();
+            if (!Settings.UseAnimation) return;
 
-            var isAnimationCompleted = false;
-            if (!isAnimationCompleted && settings.UseAnimation)
+            e.Cancel = true;
+            var sb = FindResource("CloseAnimation") as Storyboard;
+            Storyboard.SetTarget(sb, this);
+            sb.Completed += (s, a) =>
             {
-                e.Cancel = true;
-                Storyboard sb = FindResource("CloseAnimation") as Storyboard;
-                Storyboard.SetTarget(sb, this);
-                sb.Completed += (s, a) =>
-                {
-                    isAnimationCompleted = true;
-                    Environment.Exit(0);
-                };
-                sb.Begin();
-            }
+                Environment.Exit(0);
+            };
+            sb.Begin();
         }
 
         private void CloseWindow(object sender, RoutedEventArgs e)
@@ -438,14 +436,16 @@ namespace osu_Player.Windows
         {
             var song = (Song)((MenuItem)sender).Tag;
 
-            if (settings.DisabledSongs.Contains(song))
+            if (Settings.DisabledSongs.Contains(song))
                 MessageBox.Show(
-                    "既に非表示されています。", "osu! Player",
-                    MessageBoxButton.OK, MessageBoxImage.Error
+                    "既に非表示されています。",
+                    "osu! Player",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
                 );
 
-            settings.DisabledSongs.Add(song);
-            settings.Write();
+            Settings.DisabledSongs.Add(song);
+            Settings.Write();
 
             _songs.Remove(song);
         }
@@ -454,9 +454,13 @@ namespace osu_Player.Windows
         {
             try
             {
-                if (!Directory.Exists(settings.OsuPath + @"\Songs"))
+                if (!Directory.Exists(Settings.OsuPath + @"\Songs"))
                 {
-                    MessageBox.Show("正しい osu! フォルダの場所を指定してください。", "osu! Player");
+                    MessageBox.Show(
+                        "正しい osu! フォルダの場所を指定してください。",
+                        "osu! Player"
+                    );
+
                     OpenSettings(null, null);
                     return;
                 }
@@ -473,7 +477,7 @@ namespace osu_Player.Windows
                 {
                     _songs.Clear();
 
-                    var parent = new DirectoryInfo(settings.OsuPath + @"\Songs");
+                    var parent = new DirectoryInfo(Settings.OsuPath + @"\Songs");
                     var subFolders = parent.GetDirectories("*", SearchOption.TopDirectoryOnly);
 
                     if (doShuffle) subFolders = subFolders.OrderBy(i => Guid.NewGuid()).ToArray();
@@ -483,7 +487,7 @@ namespace osu_Player.Windows
                         {
                             var song = new Song(subFolder);
                             if (!song.IsBeatmap) continue;
-                            if (settings.DisabledSongs.Contains(song)) continue;
+                            if (Settings.DisabledSongs.Contains(song)) continue;
                             Dispatcher.BeginInvoke((Action)(() =>
                             {
                                 _songs.Add(song);
@@ -570,33 +574,36 @@ namespace osu_Player.Windows
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern bool PostMessage(IntPtr hWnd, Int32 Msg, IntPtr wParam, IntPtr lParam);
+        private static extern bool PostMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             switch (msg)
             {
-                case WM_ENTERSIZEMOVE:
+                case WmEnterSizeMove:
                     _isSizing = true;
                     break;
-                case WM_EXITSIZEMOVE:
+
+                case WmExitSizeMove:
                     _isSizing = false;
-                    PostMessage(hwnd, WM_SIZE, lastWParam, lastLParam);
+                    PostMessage(hwnd, WmSize, _lastWParam, _lastLParam);
                     break;
-                case WM_SIZE:
+
+                case WmSize:
                     if (_isSizing)
                     {
                         handled = true;
-                        
-                        lastLParam = lParam;
-                        lastWParam = wParam;
+
+                        _lastLParam = lParam;
+                        _lastWParam = wParam;
                     }
                     break;
             }
+
             return IntPtr.Zero;
         }
 
-        private void OnExceptionThrow(object sender, FirstChanceExceptionEventArgs e)
+        private static void OnExceptionThrow(object sender, FirstChanceExceptionEventArgs e)
         {
             if (e.Exception.Source == "PresentationCore" ||
                 e.Exception.Source == "System.Xaml") return;
@@ -605,7 +612,7 @@ namespace osu_Player.Windows
                     + "以下のレポートを開発者に報告してください。\n"
                     + "※OKボタンをクリックするとクリップボードにレポートをコピーして終了します。\n"
                     + "※キャンセルボタンをクリックするとそのまま終了します。\n\n"
-                    + e.Exception.GetType().ToString() + "\n"
+                    + e.Exception.GetType() + "\n"
                     + e.Exception.Message + "\n"
                     + e.Exception.StackTrace + "\n"
                     + e.Exception.Source;
@@ -613,7 +620,7 @@ namespace osu_Player.Windows
             if (e.Exception.InnerException != null)
             {
                 msg += "\nInner: "
-                     + e.Exception.InnerException.GetType().ToString() + "\n"
+                     + e.Exception.InnerException.GetType() + "\n"
                      + e.Exception.InnerException.Message + "\n"
                      + e.Exception.InnerException.StackTrace + "\n"
                      + e.Exception.InnerException.Source;

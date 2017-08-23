@@ -8,10 +8,11 @@ namespace osu_Player.Windows
     /// <summary>
     /// SplashWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class SplashWindow : Window
+    public partial class SplashWindow
     {
+        private readonly MainWindow _instance;
+
         private bool _isAnimationCompleted;
-        private MainWindow _instance;
 
         public SplashWindow()
         {
@@ -22,9 +23,9 @@ namespace osu_Player.Windows
 
         private void Init(object sender, RoutedEventArgs e)
         {
-            if (_instance.settings.UseAnimation)
+            if (_instance.Settings.UseAnimation)
             {
-                Storyboard sb = FindResource("StartAnimation") as Storyboard;
+                var sb = FindResource("StartAnimation") as Storyboard;
                 Storyboard.SetTarget(sb, this);
                 sb.Begin();
             }
@@ -36,13 +37,12 @@ namespace osu_Player.Windows
 
         private void OnClosing(object sender, CancelEventArgs e)
         {
-            if (!_isAnimationCompleted && _instance.settings.UseAnimation)
-            {
-                e.Cancel = true;
-                Storyboard sb = FindResource("CloseAnimation") as Storyboard;
-                Storyboard.SetTarget(sb, this);
-                sb.Begin();
-            }
+            if (_isAnimationCompleted || !_instance.Settings.UseAnimation) return;
+
+            e.Cancel = true;
+            var sb = FindResource("CloseAnimation") as Storyboard;
+            Storyboard.SetTarget(sb, this);
+            sb.Begin();
         }
 
         private void OnAnimationCompleted(object sender, EventArgs e)
