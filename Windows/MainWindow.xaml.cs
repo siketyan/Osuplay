@@ -149,7 +149,7 @@ namespace osu_Player.Windows
                 var splash = new SplashWindow();
                 splash.Show();
 
-                await Task.Run(() => Thread.Sleep(1000));
+                await Task.Delay(1000);
                 await RefreshListAsync();
 
                 splash.Close();
@@ -157,7 +157,7 @@ namespace osu_Player.Windows
 
             if (Settings.UseAnimation)
             {
-                await Task.Run(() => Thread.Sleep(1000));
+                await Task.Delay(1000);
                 Activate();
 
                 var sb = FindResource("StartAnimation") as Storyboard;
