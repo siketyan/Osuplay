@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using CommonDialog = Microsoft.Win32.CommonDialog;
 using FolderBrowserDialogForms = System.Windows.Forms.FolderBrowserDialog;
 
-namespace osu_Player
+namespace osu_Player.Utilities
 {
     public class FolderBrowserDialog : CommonDialog
     {

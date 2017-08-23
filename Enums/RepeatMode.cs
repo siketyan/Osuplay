@@ -1,4 +1,4 @@
-﻿namespace osu_Player
+﻿namespace osu_Player.Enums
 {
     public enum RepeatMode
     {

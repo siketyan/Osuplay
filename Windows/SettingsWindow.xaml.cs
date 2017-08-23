@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Windows;
+using osu_Player.Objects;
+using osu_Player.Utilities;
 using Un4seen.Bass;
 
-namespace osu_Player
+namespace osu_Player.Windows
 {
     /// <summary>
     /// SettingsWindow.xaml の相互作用ロジック

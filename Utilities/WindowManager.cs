@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
+using osu_Player.Windows;
 
-namespace osu_Player
+namespace osu_Player.Utilities
 {
     public static class WindowManager
     {

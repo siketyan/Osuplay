@@ -17,8 +17,11 @@ using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Windows.Media.Animation;
 using System.Threading;
+using osu_Player.Enums;
+using osu_Player.Objects;
+using osu_Player.Utilities;
 
-namespace osu_Player
+namespace osu_Player.Windows
 {
     /// <summary>
     /// MainWindow.xaml の相互作用ロジック
