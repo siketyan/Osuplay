@@ -114,7 +114,7 @@ namespace osu_Player.Windows
             Settings = Settings.Read();
             if (Settings.CurrentVersion != Settings.Version)
             {
-                MessageBox.Show("設定ファイルのバージョンが異なるため、使用できません。\n削除または移動してから再試行してください。");
+                new MessageWindow("設定ファイルのバージョンが異なるため、使用できません。\n削除または移動してから再試行してください。").ShowDialog();
                 Environment.Exit(0);
             }
 
@@ -123,14 +123,13 @@ namespace osu_Player.Windows
             {
                 if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!"))
                 {
-                    var result = MessageBox.Show(
+                    var window = new MessageWindow(
                         "既定の場所にosu!フォルダが見つかりました。他の場所のosu!フォルダを使用しますか？",
-                        "osu! Player",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Question
+                        MessageBoxButton.YesNo
                     );
 
-                    if (result == MessageBoxResult.No)
+                    window.ShowDialog();
+                    if (window.Result == MessageBoxResult.No)
                     {
                         Settings.OsuPath =
                             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\osu!";
@@ -185,7 +184,7 @@ namespace osu_Player.Windows
             if (_channel != 0) StopSong();
             if (Settings.AudioDevice == 0)
             {
-                MessageBox.Show("オーディオデバイスを設定してください。");
+                new MessageWindow("オーディオデバイスを設定してください。").ShowDialog();
                 SongsList.SelectedIndex = -1;
                 OpenSettings(null, null);
                 return;
@@ -437,12 +436,7 @@ namespace osu_Player.Windows
             var song = (Song)((MenuItem)sender).Tag;
 
             if (Settings.DisabledSongs.Contains(song))
-                MessageBox.Show(
-                    "既に非表示されています。",
-                    "osu! Player",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                new MessageWindow("既に非表示されています。").ShowDialog();
 
             Settings.DisabledSongs.Add(song);
             Settings.Write();
@@ -456,10 +450,7 @@ namespace osu_Player.Windows
             {
                 if (!Directory.Exists(Settings.OsuPath + @"\Songs"))
                 {
-                    MessageBox.Show(
-                        "正しい osu! フォルダの場所を指定してください。",
-                        "osu! Player"
-                    );
+                    new MessageWindow("正しい osu! フォルダの場所を指定してください。").ShowDialog();
 
                     OpenSettings(null, null);
                     return;
@@ -610,8 +601,8 @@ namespace osu_Player.Windows
 
             var msg = "予期しない例外が発生したため、osu! Playerを終了します。\n"
                     + "以下のレポートを開発者に報告してください。\n"
-                    + "※OKボタンをクリックするとクリップボードにレポートをコピーして終了します。\n"
-                    + "※キャンセルボタンをクリックするとそのまま終了します。\n\n"
+                    + "※「はい」をクリックするとクリップボードにレポートをコピーして終了します。\n"
+                    + "※「いいえ」をクリックするとそのまま終了します。\n\n"
                     + e.Exception.GetType() + "\n"
                     + e.Exception.Message + "\n"
                     + e.Exception.StackTrace + "\n"
@@ -626,11 +617,13 @@ namespace osu_Player.Windows
                      + e.Exception.InnerException.Source;
             }
 
-            var result = MessageBox.Show(
-                            msg, "Error - osu! Player",
-                            MessageBoxButton.OKCancel, MessageBoxImage.Error
+            var window = new MessageWindow(
+                            msg,
+                            MessageBoxButton.YesNo
                          );
-            if (result == MessageBoxResult.OK)
+
+            window.ShowDialog();
+            if (window.Result == MessageBoxResult.Yes)
             {
                 var thread = new Thread(() =>
                 {
