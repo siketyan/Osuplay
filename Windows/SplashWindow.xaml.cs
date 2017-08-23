@@ -26,6 +26,8 @@ namespace osu_Player.Windows
             if (_instance.Settings.UseAnimation)
             {
                 var sb = FindResource("StartAnimation") as Storyboard;
+                if (sb == null) return;
+
                 Storyboard.SetTarget(sb, this);
                 sb.Begin();
             }
@@ -41,6 +43,8 @@ namespace osu_Player.Windows
 
             e.Cancel = true;
             var sb = FindResource("CloseAnimation") as Storyboard;
+            if (sb == null) return;
+
             Storyboard.SetTarget(sb, this);
             sb.Begin();
         }

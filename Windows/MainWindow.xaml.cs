@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -94,7 +93,6 @@ namespace osu_Player.Windows
             _timer.Tick += TimerTick;
             AppDomain.CurrentDomain.FirstChanceException += OnExceptionThrow;
 
-            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             BassNet.Registration(__Private.MAIL, __Private.CODE);
 
             SongsList.ItemsSource = _songs;
@@ -104,7 +102,7 @@ namespace osu_Player.Windows
         private async void InitAsync(object sender, RoutedEventArgs e)
         {
             var hsrc = PresentationSource.FromVisual(this) as HwndSource;
-            hsrc.AddHook(WndProc);
+            hsrc?.AddHook(WndProc);
 
             if (!File.Exists("settings.json"))
             {
@@ -160,12 +158,15 @@ namespace osu_Player.Windows
                 Activate();
 
                 var sb = FindResource("StartAnimation") as Storyboard;
-                Storyboard.SetTarget(sb, this);
-                sb.Completed += (s, a) =>
+                if (sb != null)
                 {
-                    ShowInTaskbar = true;
-                };
-                sb.Begin();
+                    Storyboard.SetTarget(sb, this);
+                    sb.Completed += (s, a) =>
+                    {
+                        ShowInTaskbar = true;
+                    };
+                    sb.Begin();
+                }
             }
             else
             {
@@ -408,6 +409,8 @@ namespace osu_Player.Windows
 
             e.Cancel = true;
             var sb = FindResource("CloseAnimation") as Storyboard;
+            if (sb == null) return;
+
             Storyboard.SetTarget(sb, this);
             sb.Completed += (s, a) =>
             {
@@ -565,7 +568,7 @@ namespace osu_Player.Windows
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern bool PostMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+        private static extern bool PostMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {

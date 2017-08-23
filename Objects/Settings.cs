@@ -22,7 +22,7 @@ namespace osu_Player.Objects
         public string OsuPath { get; set; }
 
         [JsonProperty("audio_device")]
-        public int AudioDevice { get; set; } = 0;
+        public int AudioDevice { get; set; }
 
         [JsonProperty("disabled_songs")]
         public List<Song> DisabledSongs { get; set; }

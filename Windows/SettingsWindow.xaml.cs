@@ -63,6 +63,8 @@ namespace osu_Player.Windows
 
         private async void CloseWindowAsync(object sender, RoutedEventArgs e)
         {
+            if (UseAnimation.IsChecked == null || UseSplashScreen.IsChecked == null) return;
+
             _settings.OsuPath = OsuPath.Text;
             _settings.AudioDevice = AudioDevice.SelectedIndex;
             _settings.UseAnimation = (bool)UseAnimation.IsChecked;
