@@ -137,6 +137,16 @@ namespace osu_Player
                         return;
                     }
                 }
+                else
+                {
+                    MessageBox.Show(
+                        "既定の場所にosu!フォルダが見つかりませんでした。設定画面で手動設定してください。",
+                        "osu! Player"
+                    );
+
+                    new SettingsWindow { Owner = this }.ShowDialog();
+                    return;
+                }
             }
 
             if (settings.UseSplashScreen)
